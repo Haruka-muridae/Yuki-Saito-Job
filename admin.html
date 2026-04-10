@@ -18,20 +18,9 @@
   --r:6px;
 }
 html,body{height:100%;font-family:'Noto Sans JP',sans-serif;font-size:14px;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
-/* LOGIN */
-#login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--navy)}
-.login-box{background:#fff;border-radius:var(--r);padding:48px 40px;width:360px;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,.25)}
-.login-logo{width:52px;height:52px;margin:0 auto 20px}
-.login-title{font-size:1.1rem;font-weight:500;color:var(--navy);margin-bottom:6px}
-.login-sub{font-size:.75rem;color:var(--ink3);line-height:1.7;margin-bottom:24px}
-.login-input{width:100%;padding:11px 14px;border:1px solid var(--border);border-radius:var(--r);font-family:inherit;font-size:.9rem;outline:none;margin-bottom:12px;transition:.2s}
-.login-input:focus{border-color:var(--navy)}
-.login-btn{width:100%;padding:12px;background:var(--navy);color:#fff;border:none;border-radius:var(--r);font-family:inherit;font-size:.9rem;font-weight:500;cursor:pointer;transition:.2s}
-.login-btn:hover{background:var(--navy2)}
-.login-err{color:var(--red);font-size:.75rem;margin-top:10px;display:none}
-.login-note{margin-top:16px;font-size:.7rem;color:var(--ink3)}
+
 /* APP */
-#app{display:none;min-height:100vh}
+#app{display:block;min-height:100vh}
 .shell{display:flex;min-height:100vh}
 /* SIDEBAR */
 .sidebar{width:210px;min-width:210px;background:var(--navy);display:flex;flex-direction:column;min-height:100vh;position:fixed;top:0;left:0;overflow-y:auto}
@@ -137,23 +126,6 @@ td.tdb{color:var(--ink);font-weight:500}
 </head>
 <body>
 
-<!-- LOGIN -->
-<div id="login-screen">
-  <div class="login-box">
-    <svg class="login-logo" viewBox="0 0 52 52" fill="none">
-      <rect x="1" y="1" width="50" height="50" stroke="#1C2B3A" stroke-width="1.5"/>
-      <rect x="5" y="5" width="42" height="42" stroke="#C9A96E" stroke-width=".8" opacity=".6"/>
-      <text x="26" y="36" text-anchor="middle" font-family="serif" font-size="24" fill="#1C2B3A">悠</text>
-    </svg>
-    <p class="login-title">管理者ページ</p>
-    <p class="login-sub">Yuki Saito 公式サイト<br>管理者専用ページです</p>
-    <input class="login-input" type="password" id="login-password" placeholder="パスワードを入力" onkeydown="if(event.key==='Enter')doLogin()">
-    <button class="login-btn" onclick="doLogin()">ログイン</button>
-    <p class="login-err" id="login-err">パスワードが違います</p>
-    <p class="login-note">※ 管理者のみアクセスできます</p>
-  </div>
-</div>
-
 <!-- APP -->
 <div id="app">
   <div class="shell">
@@ -209,10 +181,7 @@ td.tdb{color:var(--ink);font-weight:500}
         </button>
       </nav>
       <div class="sb-foot">
-        <button class="btn-logout" onclick="doLogout()">
-          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M5 2H2a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h3M9 9.5l3-3-3-3M12 6.5H5" stroke="currentColor" stroke-width="1.2"/></svg>
-          ログアウト
-        </button>
+        
       </div>
     </aside>
 
@@ -393,7 +362,6 @@ td.tdb{color:var(--ink);font-weight:500}
 // ============================================
 // 設定
 // ============================================
-const ADMIN_PASSWORD = 'yuuki2026'; // ★ここを変更してください
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbzA-v9yctvKsBYShiRqBZgut78LOWrveixP1borXgO1WjnP0eRvylvkrnQv0jdE-Kar/exec';
 
 // ============================================
@@ -419,30 +387,11 @@ const tLabel = {system:'システムコンサル',education:'教育コンサル'
 const tBadge = {system:'b-blue',education:'b-green',sales:'b-yellow',other:'b-gray'};
 const pNames = {dashboard:'ダッシュボード',contacts:'問い合わせ',calendar:'予約管理',services:'サービス管理',lp:'LP 管理',profile:'プロフィール',pricing:'料金設定',settings:'サイト設定'};
 
-// ============================================
-// ログイン（パスワード認証）
-// ============================================
-function doLogin() {
-  const pw = document.getElementById('login-password').value;
-  const err = document.getElementById('login-err');
-  if (pw === ADMIN_PASSWORD) {
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('app').style.display = 'block';
-    renderAll();
-    loadFromGas();
-    toast('ログインしました', 'ok');
-  } else {
-    err.style.display = 'block';
-    document.getElementById('login-password').value = '';
-  }
-}
-
-function doLogout() {
-  document.getElementById('app').style.display = 'none';
-  document.getElementById('login-screen').style.display = 'flex';
-  document.getElementById('login-password').value = '';
-  document.getElementById('login-err').style.display = 'none';
-}
+// ページ読み込み時に自動初期化
+window.addEventListener('DOMContentLoaded', () => {
+  renderAll();
+  loadFromGas();
+});
 
 // ============================================
 // GAS通信

@@ -1,0 +1,1675 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>管理者ページ | Yuki Saito</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+
+  <style>
+    /* ============================================
+       Reset & Variables
+    ============================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #F4F5F7;
+      --surface:   #FFFFFF;
+      --border:    #E2E4E8;
+      --border-lt: #ECEEF2;
+      --navy:      #1C2B3A;
+      --navy-lt:   #2E4059;
+      --gold:      #C9A96E;
+      --ink:       #1A1A2E;
+      --ink-mid:   #4A4F5C;
+      --ink-lt:    #8A909E;
+      --green:     #2D9C6E;
+      --green-bg:  #EBF7F2;
+      --red:       #D94F4F;
+      --red-bg:    #FDEEEE;
+      --yellow:    #D4881A;
+      --yellow-bg: #FDF4E3;
+      --blue:      #2B6CB0;
+      --blue-bg:   #EBF4FF;
+      --mono:      'DM Mono', monospace;
+      --sans:      'Noto Sans JP', sans-serif;
+      --radius:    6px;
+      --shadow:    0 1px 4px rgba(0,0,0,0.07), 0 4px 16px rgba(0,0,0,0.04);
+    }
+
+    html { font-size: 15px; }
+    body {
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--ink);
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    /* ============================================
+       Login Screen
+    ============================================ */
+    #login-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--navy);
+      padding: 20px;
+    }
+
+    .login-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 48px 40px;
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.25);
+    }
+
+    .login-logo {
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 20px;
+    }
+
+    .login-title {
+      font-size: 1.2rem;
+      font-weight: 500;
+      color: var(--navy);
+      margin-bottom: 6px;
+    }
+
+    .login-sub {
+      font-size: 0.78rem;
+      color: var(--ink-lt);
+      margin-bottom: 36px;
+      line-height: 1.7;
+    }
+
+    .btn-google {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      width: 100%;
+      padding: 13px 20px;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      font-family: var(--sans);
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--ink);
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .btn-google:hover {
+      background: var(--bg);
+      border-color: var(--navy);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .btn-google svg { flex-shrink: 0; }
+
+    .login-note {
+      margin-top: 20px;
+      font-size: 0.72rem;
+      color: var(--ink-lt);
+    }
+
+    /* ============================================
+       App Layout
+    ============================================ */
+    #app { display: none; min-height: 100vh; }
+
+    .app-layout {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      min-height: 100vh;
+    }
+
+    /* ============================================
+       Sidebar
+    ============================================ */
+    .sidebar {
+      background: var(--navy);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0; left: 0;
+      width: 220px;
+      height: 100vh;
+      z-index: 50;
+      overflow-y: auto;
+    }
+
+    .sidebar-header {
+      padding: 24px 20px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .sidebar-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .sidebar-logo-mark {
+      width: 32px;
+      height: 32px;
+      flex-shrink: 0;
+    }
+
+    .sidebar-logo-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1;
+    }
+
+    .sidebar-logo-name {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #fff;
+      letter-spacing: 0.03em;
+    }
+
+    .sidebar-logo-sub {
+      font-family: var(--mono);
+      font-size: 0.58rem;
+      color: var(--gold);
+      letter-spacing: 0.15em;
+      margin-top: 4px;
+      text-transform: uppercase;
+    }
+
+    .sidebar-user {
+      padding: 16px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--navy);
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+
+    .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+    .user-info { overflow: hidden; }
+
+    .user-name {
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .user-email {
+      font-size: 0.68rem;
+      color: rgba(255,255,255,0.45);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 16px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .nav-section-label {
+      font-family: var(--mono);
+      font-size: 0.58rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+      padding: 12px 8px 6px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 10px;
+      border-radius: 5px;
+      font-size: 0.82rem;
+      font-weight: 400;
+      color: rgba(255,255,255,0.65);
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      text-decoration: none;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+    }
+
+    .nav-item:hover {
+      background: rgba(255,255,255,0.07);
+      color: #fff;
+    }
+
+    .nav-item.active {
+      background: rgba(201,169,110,0.15);
+      color: var(--gold);
+    }
+
+    .nav-item svg { flex-shrink: 0; opacity: 0.8; }
+    .nav-item.active svg { opacity: 1; }
+
+    .nav-badge {
+      margin-left: auto;
+      background: var(--red);
+      color: #fff;
+      font-size: 0.62rem;
+      font-family: var(--mono);
+      padding: 1px 6px;
+      border-radius: 10px;
+      min-width: 18px;
+      text-align: center;
+    }
+
+    .sidebar-footer {
+      padding: 16px 12px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .btn-logout {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      padding: 9px 10px;
+      background: none;
+      border: none;
+      border-radius: 5px;
+      font-family: var(--sans);
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.45);
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .btn-logout:hover {
+      background: rgba(217,79,79,0.15);
+      color: #ff8080;
+    }
+
+    /* ============================================
+       Main Content
+    ============================================ */
+    .main-content {
+      margin-left: 220px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .topbar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 40;
+    }
+
+    .topbar-title {
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--ink);
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--navy);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius);
+      padding: 8px 16px;
+      font-family: var(--sans);
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-primary:hover { background: var(--navy-lt); }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--surface);
+      color: var(--ink-mid);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 7px 14px;
+      font-family: var(--sans);
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--navy);
+      background: var(--bg);
+    }
+
+    .btn-danger {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--red-bg);
+      color: var(--red);
+      border: 1px solid rgba(217,79,79,0.25);
+      border-radius: var(--radius);
+      padding: 7px 14px;
+      font-family: var(--sans);
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-danger:hover { background: #fcd9d9; }
+
+    .page-content {
+      padding: 28px 32px;
+      flex: 1;
+    }
+
+    /* Panels */
+    .panel {
+      display: none;
+    }
+    .panel.active { display: block; }
+
+    /* ============================================
+       Cards & Stats
+    ============================================ */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+
+    .stat-label {
+      font-size: 0.72rem;
+      color: var(--ink-lt);
+      margin-bottom: 8px;
+      font-weight: 400;
+    }
+
+    .stat-value {
+      font-size: 1.8rem;
+      font-weight: 500;
+      color: var(--ink);
+      line-height: 1;
+      margin-bottom: 6px;
+      font-family: var(--mono);
+    }
+
+    .stat-sub {
+      font-size: 0.72rem;
+      color: var(--ink-lt);
+    }
+
+    .stat-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+
+    .badge-green { background: var(--green-bg); color: var(--green); }
+    .badge-red   { background: var(--red-bg);   color: var(--red); }
+    .badge-yellow{ background: var(--yellow-bg); color: var(--yellow); }
+    .badge-blue  { background: var(--blue-bg);   color: var(--blue); }
+    .badge-gray  { background: var(--border-lt); color: var(--ink-lt); }
+
+    /* Table */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .card-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .card-title {
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--ink);
+    }
+
+    .card-body { padding: 20px; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead th {
+      text-align: left;
+      font-size: 0.72rem;
+      font-weight: 500;
+      color: var(--ink-lt);
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+      white-space: nowrap;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid var(--border-lt);
+      transition: background 0.15s;
+    }
+
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: var(--bg); }
+
+    td {
+      padding: 12px 16px;
+      font-size: 0.82rem;
+      color: var(--ink-mid);
+      vertical-align: middle;
+    }
+
+    td.td-main {
+      color: var(--ink);
+      font-weight: 500;
+    }
+
+    .td-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    .btn-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      cursor: pointer;
+      color: var(--ink-lt);
+      transition: all 0.15s;
+    }
+
+    .btn-icon:hover { border-color: var(--navy); color: var(--navy); background: var(--bg); }
+    .btn-icon.danger:hover { border-color: var(--red); color: var(--red); background: var(--red-bg); }
+
+    /* Toggle Switch */
+    .toggle {
+      position: relative;
+      display: inline-block;
+      width: 38px;
+      height: 22px;
+    }
+
+    .toggle input { opacity: 0; width: 0; height: 0; }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background: var(--border);
+      border-radius: 22px;
+      transition: background 0.2s;
+    }
+
+    .toggle-slider::before {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      left: 3px;
+      bottom: 3px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform 0.2s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+
+    .toggle input:checked + .toggle-slider { background: var(--green); }
+    .toggle input:checked + .toggle-slider::before { transform: translateX(16px); }
+
+    /* Form Elements */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--ink-mid);
+      margin-bottom: 6px;
+    }
+
+    .form-input, .form-textarea, .form-select {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-family: var(--sans);
+      font-size: 0.85rem;
+      color: var(--ink);
+      background: var(--surface);
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+    }
+
+    .form-input:focus, .form-textarea:focus, .form-select:focus {
+      border-color: var(--navy);
+      box-shadow: 0 0 0 3px rgba(28,43,58,0.08);
+    }
+
+    .form-textarea { resize: vertical; min-height: 100px; }
+
+    .form-hint {
+      font-size: 0.72rem;
+      color: var(--ink-lt);
+      margin-top: 5px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    /* Section heading */
+    .section-title {
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--ink-lt);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* Contact detail */
+    .contact-detail {
+      display: none;
+    }
+
+    .contact-detail.open {
+      display: block;
+    }
+
+    .contact-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .contact-meta-item {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .meta-label {
+      font-size: 0.68rem;
+      color: var(--ink-lt);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .meta-value {
+      font-size: 0.82rem;
+      color: var(--ink);
+    }
+
+    .contact-message-box {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      font-size: 0.85rem;
+      line-height: 1.8;
+      color: var(--ink-mid);
+      margin-bottom: 16px;
+      white-space: pre-wrap;
+    }
+
+    /* Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      background: var(--surface);
+      border-radius: var(--radius);
+      width: 100%;
+      max-width: 560px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    }
+
+    .modal-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-title {
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--ink);
+    }
+
+    .modal-close {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      background: none;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      color: var(--ink-lt);
+      transition: background 0.15s;
+    }
+
+    .modal-close:hover { background: var(--bg); }
+
+    .modal-body { padding: 24px; }
+
+    .modal-footer {
+      padding: 16px 24px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    /* Photo upload */
+    .photo-upload-area {
+      border: 2px dashed var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .photo-upload-area:hover {
+      border-color: var(--navy);
+      background: var(--bg);
+    }
+
+    .photo-upload-icon {
+      color: var(--ink-lt);
+      margin-bottom: 10px;
+    }
+
+    .photo-upload-text {
+      font-size: 0.82rem;
+      color: var(--ink-mid);
+      margin-bottom: 4px;
+    }
+
+    .photo-upload-sub {
+      font-size: 0.72rem;
+      color: var(--ink-lt);
+    }
+
+    .photo-current {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .photo-thumb {
+      position: relative;
+      width: 80px;
+      height: 80px;
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .photo-thumb-label {
+      font-size: 0.6rem;
+      color: var(--ink-lt);
+      text-align: center;
+    }
+
+    /* Toast */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 300;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .toast {
+      background: var(--ink);
+      color: #fff;
+      font-size: 0.82rem;
+      padding: 12px 18px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      animation: slideIn 0.3s ease;
+      max-width: 300px;
+    }
+
+    .toast.success { background: var(--green); }
+    .toast.error   { background: var(--red); }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(20px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 48px 20px;
+      color: var(--ink-lt);
+    }
+
+    .empty-state svg { margin: 0 auto 12px; opacity: 0.3; }
+    .empty-state p { font-size: 0.85rem; }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 700px) {
+      .app-layout { grid-template-columns: 1fr; }
+      .sidebar { transform: translateX(-100%); transition: transform 0.3s ease; }
+      .sidebar.open { transform: translateX(0); }
+      .main-content { margin-left: 0; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+
+    /* Calendar embed area */
+    .calendar-embed {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      text-align: center;
+      min-height: 200px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      color: var(--ink-lt);
+      font-size: 0.85rem;
+    }
+
+    .lp-type-badge {
+      font-size: 0.68rem;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-family: var(--mono);
+    }
+  </style>
+</head>
+<body>
+
+<!-- ==================== LOGIN ==================== -->
+<div id="login-screen">
+  <div class="login-card">
+    <svg class="login-logo" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="1" y="1" width="46" height="46" stroke="#1C2B3A" stroke-width="1.5"/>
+      <rect x="5" y="5" width="38" height="38" stroke="#C9A96E" stroke-width="0.8" opacity="0.6"/>
+      <text x="24" y="33" text-anchor="middle" font-family="Noto Serif JP,serif" font-size="22" font-weight="400" fill="#1C2B3A">悠</text>
+    </svg>
+    <p class="login-title">管理者ページ</p>
+    <p class="login-sub">Yuki Saito 公式サイト<br>管理者専用ページです</p>
+    <button class="btn-google" id="btn-login">
+      <svg width="18" height="18" viewBox="0 0 18 18">
+        <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/>
+        <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/>
+        <path fill="#FBBC05" d="M3.964 10.706A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.706V4.962H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.038l3.007-2.332z"/>
+        <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.962L3.964 7.294C4.672 5.163 6.656 3.58 9 3.58z"/>
+      </svg>
+      Google アカウントでログイン
+    </button>
+    <p class="login-note">※ 登録済みの管理者アカウントのみアクセスできます</p>
+  </div>
+</div>
+
+<!-- ==================== APP ==================== -->
+<div id="app">
+  <div class="app-layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <svg class="sidebar-logo-mark" viewBox="0 0 32 32" fill="none">
+            <rect x="0.5" y="0.5" width="31" height="31" stroke="#C9A96E" stroke-opacity="0.5"/>
+            <text x="16" y="22" text-anchor="middle" font-family="Noto Serif JP,serif" font-size="14" fill="white">悠</text>
+          </svg>
+          <div class="sidebar-logo-text">
+            <span class="sidebar-logo-name">Yuki Saito</span>
+            <span class="sidebar-logo-sub">Admin Panel</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-user">
+        <div class="user-avatar" id="user-avatar">Y</div>
+        <div class="user-info">
+          <div class="user-name" id="user-name">Yuki Saito</div>
+          <div class="user-email" id="user-email">yuki.s@tsam-jp.com</div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <p class="nav-section-label">メイン</p>
+        <button class="nav-item active" data-panel="dashboard">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="9" y="1" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="1" y="9" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="9" y="9" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.3"/></svg>
+          ダッシュボード
+        </button>
+        <button class="nav-item" data-panel="contacts">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 12c0-2.21 1.79-4 4-4h4c2.21 0 4 1.79 4 4" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="5" r="3" stroke="currentColor" stroke-width="1.3"/></svg>
+          問い合わせ
+          <span class="nav-badge" id="unread-badge">3</span>
+        </button>
+        <button class="nav-item" data-panel="calendar">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="3" width="14" height="12" rx="1" stroke="currentColor" stroke-width="1.3"/><path d="M1 7h14M5 1v4M11 1v4" stroke="currentColor" stroke-width="1.3"/></svg>
+          予約管理
+        </button>
+
+        <p class="nav-section-label">コンテンツ</p>
+        <button class="nav-item" data-panel="lp">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="14" height="14" rx="1" stroke="currentColor" stroke-width="1.3"/><path d="M4 5h8M4 8h6M4 11h4" stroke="currentColor" stroke-width="1.3"/></svg>
+          LP 管理
+        </button>
+        <button class="nav-item" data-panel="profile">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5" r="3" stroke="currentColor" stroke-width="1.3"/><path d="M2 14c0-3.314 2.686-6 6-6s6 2.686 6 6" stroke="currentColor" stroke-width="1.3"/></svg>
+          プロフィール
+        </button>
+        <button class="nav-item" data-panel="pricing">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.3"/><path d="M8 4v8M5.5 6.5c0-1.38 1.12-2.5 2.5-2.5s2.5 1.12 2.5 2.5c0 2.5-5 2.5-5 5 0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5" stroke="currentColor" stroke-width="1.3"/></svg>
+          料金設定
+        </button>
+
+        <p class="nav-section-label">設定</p>
+        <button class="nav-item" data-panel="settings">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2.5" stroke="currentColor" stroke-width="1.3"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M2.93 2.93l1.41 1.41M11.66 11.66l1.41 1.41M2.93 13.07l1.41-1.41M11.66 4.34l1.41-1.41" stroke="currentColor" stroke-width="1.3"/></svg>
+          サイト設定
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button class="btn-logout" id="btn-logout">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 2H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h3M9 10l3-3-3-3M12 7H5" stroke="currentColor" stroke-width="1.3"/></svg>
+          ログアウト
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <div class="main-content">
+      <div class="topbar">
+        <span class="topbar-title" id="topbar-title">ダッシュボード</span>
+        <div class="topbar-actions">
+          <a href="/" target="_blank" class="btn-secondary">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M5 2H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V8M8 1h4m0 0v4m0-4L5.5 7.5" stroke="currentColor" stroke-width="1.3"/></svg>
+            サイトを見る
+          </a>
+        </div>
+      </div>
+
+      <div class="page-content">
+
+        <!-- ===== DASHBOARD ===== -->
+        <div class="panel active" id="panel-dashboard">
+          <div class="stats-grid">
+            <div class="stat-card">
+              <p class="stat-label">今月の問い合わせ</p>
+              <p class="stat-value">3</p>
+              <span class="stat-badge badge-green">▲ 先月比 +3</span>
+            </div>
+            <div class="stat-card">
+              <p class="stat-label">未読メッセージ</p>
+              <p class="stat-value">3</p>
+              <span class="stat-badge badge-yellow">要確認</span>
+            </div>
+            <div class="stat-card">
+              <p class="stat-label">公開中の LP</p>
+              <p class="stat-value">2</p>
+              <span class="stat-badge badge-blue">サービス 1 / 趣味 1</span>
+            </div>
+            <div class="stat-card">
+              <p class="stat-label">今週の予約</p>
+              <p class="stat-value">1</p>
+              <span class="stat-badge badge-gray">Googleカレンダー連携中</span>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">最近の問い合わせ</span>
+              <button class="btn-secondary" onclick="switchPanel('contacts')">すべて見る</button>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th>氏名</th>
+                  <th>種別</th>
+                  <th>受信日時</th>
+                  <th>ステータス</th>
+                </tr>
+              </thead>
+              <tbody id="dashboard-contacts-tbody">
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ===== CONTACTS ===== -->
+        <div class="panel" id="panel-contacts">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">問い合わせ一覧</span>
+              <div style="display:flex;gap:8px;">
+                <select class="form-select" style="width:auto;padding:6px 10px;font-size:0.78rem;" id="contact-filter">
+                  <option value="all">すべて</option>
+                  <option value="unread">未読のみ</option>
+                  <option value="system">システムコンサル</option>
+                  <option value="education">教育コンサル</option>
+                  <option value="other">その他</option>
+                </select>
+              </div>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th>氏名</th>
+                  <th>種別</th>
+                  <th>受信日時</th>
+                  <th>ステータス</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="contacts-tbody"></tbody>
+            </table>
+          </div>
+
+          <!-- Contact Detail -->
+          <div class="card contact-detail" id="contact-detail">
+            <div class="card-header">
+              <span class="card-title" id="detail-name">—</span>
+              <button class="btn-secondary" onclick="closeDetail()">← 一覧に戻る</button>
+            </div>
+            <div class="card-body">
+              <div class="contact-meta" id="detail-meta"></div>
+              <p class="section-title">メッセージ内容</p>
+              <div class="contact-message-box" id="detail-message"></div>
+              <div style="display:flex;gap:8px;">
+                <button class="btn-primary" onclick="toast('返信メーラーを開きます', 'success')">
+                  <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M1 2h11l-5.5 6L1 2zM1 2v8a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1V2" stroke="white" stroke-width="1.2"/></svg>
+                  返信する
+                </button>
+                <button class="btn-danger" onclick="toast('削除しました', 'error')">削除</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== CALENDAR ===== -->
+        <div class="panel" id="panel-calendar">
+          <div class="card" style="margin-bottom:20px;">
+            <div class="card-header">
+              <span class="card-title">Google カレンダー連携</span>
+              <button class="btn-primary" onclick="toast('Google カレンダーを開きます', 'success')">
+                カレンダーを開く ↗
+              </button>
+            </div>
+            <div class="card-body">
+              <div class="form-group">
+                <label class="form-label">カレンダー ID（Google Calendar）</label>
+                <input class="form-input" type="text" value="yuki.s@tsam-jp.com" placeholder="example@gmail.com">
+                <p class="form-hint">Google Calendar の「カレンダーの設定」→「カレンダーの統合」に記載されたIDを入力してください。</p>
+              </div>
+              <div class="form-group">
+                <label class="form-label">予約受付ページ URL（Googleカレンダー予約ページ）</label>
+                <input class="form-input" type="url" placeholder="https://calendar.google.com/calendar/appointments/...">
+                <p class="form-hint">Google カレンダーの「予約スケジュール」で作成した予約ページのURLを貼り付けてください。</p>
+              </div>
+              <button class="btn-primary" onclick="toast('設定を保存しました', 'success')">保存する</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">今後の予約（プレビュー）</span>
+            </div>
+            <div class="calendar-embed">
+              <svg width="40" height="40" viewBox="0 0 40 40" fill="none"><rect x="3" y="7" width="34" height="30" rx="2" stroke="#8A909E" stroke-width="1.5"/><path d="M3 15h34M13 3v8M27 3v8" stroke="#8A909E" stroke-width="1.5"/><path d="M10 23h6M10 29h4M22 23h8" stroke="#8A909E" stroke-width="1.5"/></svg>
+              <p>カレンダーIDを設定すると、ここに予約状況が表示されます。</p>
+              <button class="btn-secondary" onclick="switchPanel('settings')">設定へ</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== LP MANAGEMENT ===== -->
+        <div class="panel" id="panel-lp">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">LP 一覧</span>
+              <button class="btn-primary" onclick="openLpModal()">
+                <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1v11M1 6.5h11" stroke="white" stroke-width="1.5"/></svg>
+                新規追加
+              </button>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th>タイトル</th>
+                  <th>種別</th>
+                  <th>URL</th>
+                  <th>公開状態</th>
+                  <th>更新日</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="lp-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ===== PROFILE ===== -->
+        <div class="panel" id="panel-profile">
+          <div class="card" style="margin-bottom:20px;">
+            <div class="card-header">
+              <span class="card-title">プロフィール写真</span>
+            </div>
+            <div class="card-body">
+              <p class="section-title">現在の写真</p>
+              <div class="photo-current">
+                <div class="photo-thumb">
+                  <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="10" r="5" stroke="#8A909E" stroke-width="1.2"/><path d="M3 25c0-6.075 4.925-11 11-11s11 4.925 11 11" stroke="#8A909E" stroke-width="1.2"/></svg>
+                  <span class="photo-thumb-label">ビジネス</span>
+                </div>
+                <div class="photo-thumb">
+                  <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="10" r="5" stroke="#8A909E" stroke-width="1.2"/><path d="M3 25c0-6.075 4.925-11 11-11s11 4.925 11 11" stroke="#8A909E" stroke-width="1.2"/></svg>
+                  <span class="photo-thumb-label">カジュアル</span>
+                </div>
+              </div>
+              <p class="section-title">写真をアップロード</p>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+                <div>
+                  <p class="form-label">ビジネス写真（トップ・About）</p>
+                  <div class="photo-upload-area" onclick="toast('ファイル選択ダイアログを開きます', 'success')">
+                    <div class="photo-upload-icon">
+                      <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M14 5v14M7 12l7-7 7 7" stroke="currentColor" stroke-width="1.5"/><path d="M4 23h20" stroke="currentColor" stroke-width="1.5"/></svg>
+                    </div>
+                    <p class="photo-upload-text">クリックして選択</p>
+                    <p class="photo-upload-sub">JPG / PNG・推奨: 800×1000px以上</p>
+                  </div>
+                </div>
+                <div>
+                  <p class="form-label">カジュアル写真（About・サービス）</p>
+                  <div class="photo-upload-area" onclick="toast('ファイル選択ダイアログを開きます', 'success')">
+                    <div class="photo-upload-icon">
+                      <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M14 5v14M7 12l7-7 7 7" stroke="currentColor" stroke-width="1.5"/><path d="M4 23h20" stroke="currentColor" stroke-width="1.5"/></svg>
+                    </div>
+                    <p class="photo-upload-text">クリックして選択</p>
+                    <p class="photo-upload-sub">JPG / PNG・推奨: 800×1000px以上</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">プロフィール文</span>
+              <button class="btn-primary" onclick="toast('保存しました', 'success')">保存する</button>
+            </div>
+            <div class="card-body">
+              <div class="form-group">
+                <label class="form-label">氏名（表示名）</label>
+                <input class="form-input" type="text" value="Yuki Saito">
+              </div>
+              <div class="form-group">
+                <label class="form-label">ニックネーム</label>
+                <input class="form-input" type="text" value="悠">
+              </div>
+              <div class="form-group">
+                <label class="form-label">肩書き</label>
+                <input class="form-input" type="text" value="システム・教育・営業コンサルタント">
+              </div>
+              <div class="form-group">
+                <label class="form-label">自己紹介文（About ページ）</label>
+                <textarea class="form-textarea" rows="5">はじめまして、Yuki Saito です。皆さまからは「悠」と呼ばれています。
+
+システムコンサルタント・教育コンサルタント・営業代行者として、個人・中小企業・教育機関のみなさまに向き合ってきました。課題は複雑でも、解決の糸口はいつもシンプルです。あなたの状況・目的・ペースに合わせた、完全オーダーメイドの伴走をお約束します。</textarea>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">メールアドレス（表示用）</label>
+                  <input class="form-input" type="email" value="yuki.s@tsam-jp.com">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">SNS / X（旧Twitter）URL</label>
+                  <input class="form-input" type="url" placeholder="https://x.com/...">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== PRICING ===== -->
+        <div class="panel" id="panel-pricing">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">料金表示設定</span>
+              <button class="btn-primary" onclick="savePricing()">保存する</button>
+            </div>
+            <div class="card-body">
+              <p style="font-size:0.8rem;color:var(--ink-lt);margin-bottom:24px;line-height:1.7;">
+                ここで設定した金額がサイトの「料金について」セクションに反映されます。<br>
+                「要相談」と併記されるため、上限ではなく<strong>下限・目安</strong>の金額を入力してください。
+              </p>
+
+              <div id="pricing-list"></div>
+
+              <button class="btn-secondary" onclick="addPricingRow()" style="margin-top:8px;">
+                <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1v11M1 6.5h11" stroke="currentColor" stroke-width="1.5"/></svg>
+                サービスを追加
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== SETTINGS ===== -->
+        <div class="panel" id="panel-settings">
+          <div class="card" style="margin-bottom:20px;">
+            <div class="card-header">
+              <span class="card-title">サイト基本設定</span>
+              <button class="btn-primary" onclick="toast('設定を保存しました', 'success')">保存する</button>
+            </div>
+            <div class="card-body">
+              <div class="form-group">
+                <label class="form-label">サイトタイトル</label>
+                <input class="form-input" type="text" value='Yuki Saito "悠" | システム・教育・営業コンサルタント'>
+              </div>
+              <div class="form-group">
+                <label class="form-label">メタディスクリプション</label>
+                <textarea class="form-textarea" rows="3">IT導入・教育支援・営業代行のご相談は Yuki Saito（通称：悠）へ。中小企業・個人事業主・保護者の方の課題に完全オーダーメイドで伴走します。</textarea>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">問い合わせ受信メールアドレス</label>
+                  <input class="form-input" type="email" value="yuki.s@tsam-jp.com">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Google Analytics 測定 ID</label>
+                  <input class="form-input" type="text" placeholder="G-XXXXXXXXXX">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Google Search Console 確認コード</label>
+                <input class="form-input" type="text" placeholder="メタタグの content 値を入力">
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">メンテナンスモード</span>
+            </div>
+            <div class="card-body">
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:4px 0;">
+                <div>
+                  <p style="font-size:0.85rem;font-weight:500;color:var(--ink);">メンテナンスモードを有効にする</p>
+                  <p style="font-size:0.75rem;color:var(--ink-lt);margin-top:3px;">有効にすると、管理者以外はサイトにアクセスできなくなります。</p>
+                </div>
+                <label class="toggle">
+                  <input type="checkbox">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /page-content -->
+    </div><!-- /main-content -->
+  </div><!-- /app-layout -->
+</div><!-- /app -->
+
+<!-- ===== LP Modal ===== -->
+<div class="modal-overlay" id="lp-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="lp-modal-title">LP を新規追加</span>
+      <button class="modal-close" onclick="closeLpModal()">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="1.5"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">LP タイトル</label>
+        <input class="form-input" type="text" id="lp-title-input" placeholder="例：ITコンサル入門パッケージ">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">種別</label>
+          <select class="form-select" id="lp-type-input">
+            <option value="service">サービス LP</option>
+            <option value="hobby">趣味 LP</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">スラッグ（URL）</label>
+          <input class="form-input" type="text" id="lp-slug-input" placeholder="例：it-consul-intro">
+          <p class="form-hint">/lp/<strong>[スラッグ]</strong> でアクセスされます</p>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">説明文（一覧ページに表示）</label>
+        <textarea class="form-textarea" rows="3" id="lp-desc-input" placeholder="このLPの概要を入力してください"></textarea>
+      </div>
+      <div class="form-group">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <label class="form-label" style="margin-bottom:0;">公開する</label>
+          <label class="toggle">
+            <input type="checkbox" id="lp-published-input" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeLpModal()">キャンセル</button>
+      <button class="btn-primary" onclick="saveLp()">保存する</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Toast ===== -->
+<div class="toast-container" id="toast-container"></div>
+
+<script>
+  /* ============================================
+     Data (mock)
+  ============================================ */
+  const contacts = [
+    { id: 1, name: '田中 一郎', type: 'system', email: 'tanaka@example.com', date: '2026-04-10 09:12', read: false, message: 'ITシステムの導入について相談したいです。現在、社内の勤怠管理を紙で行っており、デジタル化を検討しています。まずはどのような選択肢があるか教えていただけますか？' },
+    { id: 2, name: '佐藤 花子', type: 'education', email: 'sato@example.com', date: '2026-04-09 14:30', read: false, message: '小学3年生の子どもの学習について相談させてください。算数が苦手で、どのようにサポートすれば良いか悩んでいます。' },
+    { id: 3, name: '鈴木 誠', type: 'other', email: 'suzuki@example.com', date: '2026-04-08 18:45', read: false, message: '営業代行について詳しく聞きたいです。取り扱い可能なジャンルや条件を教えていただけますか？' },
+  ];
+
+  const lpItems = [
+    { id: 1, title: 'ITコンサル入門パッケージ', type: 'service', slug: 'it-consul-intro', desc: '中小企業向けのIT導入入門プラン', published: true, updated: '2026-04-01' },
+    { id: 2, title: '写真・カメラの世界', type: 'hobby', slug: 'photography', desc: '趣味の写真活動について', published: true, updated: '2026-03-20' },
+  ];
+
+  const pricing = [
+    { id: 1, service: 'システムコンサルティング', unit: '時間', price: 15000 },
+    { id: 2, service: '教育コンサルティング', unit: '時間', price: 8000 },
+    { id: 3, service: '営業代行', unit: '月額', price: 50000 },
+  ];
+
+  const typeLabels = { system: 'システムコンサル', education: '教育コンサル', other: 'その他' };
+  const typeColors = { system: 'badge-blue', education: 'badge-green', other: 'badge-gray' };
+
+  /* ============================================
+     Auth (mock Google OAuth flow)
+  ============================================ */
+  document.getElementById('btn-login').addEventListener('click', () => {
+    // 本番環境では Firebase Auth や Google OAuth を実装
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    renderAll();
+  });
+
+  document.getElementById('btn-logout').addEventListener('click', () => {
+    document.getElementById('app').style.display = 'none';
+    document.getElementById('login-screen').style.display = 'flex';
+    toast('ログアウトしました', 'success');
+  });
+
+  /* ============================================
+     Navigation
+  ============================================ */
+  const panelTitles = {
+    dashboard: 'ダッシュボード',
+    contacts:  '問い合わせ',
+    calendar:  '予約管理',
+    lp:        'LP 管理',
+    profile:   'プロフィール',
+    pricing:   '料金設定',
+    settings:  'サイト設定',
+  };
+
+  document.querySelectorAll('.nav-item[data-panel]').forEach(btn => {
+    btn.addEventListener('click', () => switchPanel(btn.dataset.panel));
+  });
+
+  function switchPanel(name) {
+    document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+    document.querySelector(`.nav-item[data-panel="${name}"]`)?.classList.add('active');
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.getElementById(`panel-${name}`)?.classList.add('active');
+    document.getElementById('topbar-title').textContent = panelTitles[name] || name;
+    closeDetail();
+  }
+
+  /* ============================================
+     Render contacts
+  ============================================ */
+  function renderContacts() {
+    const filter = document.getElementById('contact-filter')?.value || 'all';
+    const filtered = contacts.filter(c => {
+      if (filter === 'all') return true;
+      if (filter === 'unread') return !c.read;
+      return c.type === filter;
+    });
+
+    const html = filtered.length ? filtered.map(c => `
+      <tr onclick="openDetail(${c.id})" style="cursor:pointer;">
+        <td class="td-main">${c.name}${!c.read ? ' <span class="stat-badge badge-yellow" style="margin-left:6px;font-size:0.62rem;">未読</span>' : ''}</td>
+        <td><span class="stat-badge ${typeColors[c.type]}">${typeLabels[c.type]}</span></td>
+        <td>${c.date}</td>
+        <td>${c.read ? '<span class="stat-badge badge-gray">既読</span>' : '<span class="stat-badge badge-yellow">未読</span>'}</td>
+        <td><div class="td-actions">
+          <button class="btn-icon" title="開く" onclick="event.stopPropagation();openDetail(${c.id})">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.5" stroke="currentColor" stroke-width="1.2"/><path d="M6.5 4v3l2 1" stroke="currentColor" stroke-width="1.2"/></svg>
+          </button>
+          <button class="btn-icon danger" title="削除" onclick="event.stopPropagation();toast('削除しました', 'error')">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 3h9M5 3V2h3v1M4 3v7a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1V3" stroke="currentColor" stroke-width="1.2"/></svg>
+          </button>
+        </div></td>
+      </tr>
+    `).join('') : '<tr><td colspan="5"><div class="empty-state"><p>問い合わせはありません</p></div></td></tr>';
+
+    document.getElementById('contacts-tbody').innerHTML = html;
+
+    // dashboard preview (latest 3)
+    const dashHtml = contacts.slice(0,3).map(c => `
+      <tr onclick="switchPanel('contacts');openDetail(${c.id})" style="cursor:pointer;">
+        <td class="td-main">${c.name}</td>
+        <td><span class="stat-badge ${typeColors[c.type]}">${typeLabels[c.type]}</span></td>
+        <td>${c.date}</td>
+        <td>${c.read ? '<span class="stat-badge badge-gray">既読</span>' : '<span class="stat-badge badge-yellow">未読</span>'}</td>
+      </tr>
+    `).join('');
+    document.getElementById('dashboard-contacts-tbody').innerHTML = dashHtml;
+  }
+
+  document.getElementById('contact-filter')?.addEventListener('change', renderContacts);
+
+  function openDetail(id) {
+    const c = contacts.find(x => x.id === id);
+    if (!c) return;
+    c.read = true;
+    updateUnreadBadge();
+    renderContacts();
+
+    document.getElementById('detail-name').textContent = c.name;
+    document.getElementById('detail-meta').innerHTML = `
+      <div class="contact-meta-item"><span class="meta-label">種別</span><span class="meta-value">${typeLabels[c.type]}</span></div>
+      <div class="contact-meta-item"><span class="meta-label">メール</span><span class="meta-value"><a href="mailto:${c.email}" style="color:var(--blue);">${c.email}</a></span></div>
+      <div class="contact-meta-item"><span class="meta-label">受信日時</span><span class="meta-value">${c.date}</span></div>
+    `;
+    document.getElementById('detail-message').textContent = c.message;
+    document.getElementById('contact-detail').classList.add('open');
+    document.querySelector('.card:first-child', '#panel-contacts').style.display = 'none';
+  }
+
+  function closeDetail() {
+    document.getElementById('contact-detail')?.classList.remove('open');
+    const firstCard = document.querySelector('#panel-contacts .card:first-child');
+    if (firstCard) firstCard.style.display = '';
+  }
+
+  function updateUnreadBadge() {
+    const count = contacts.filter(c => !c.read).length;
+    const badge = document.getElementById('unread-badge');
+    badge.textContent = count;
+    badge.style.display = count > 0 ? '' : 'none';
+  }
+
+  /* ============================================
+     Render LP
+  ============================================ */
+  function renderLp() {
+    const html = lpItems.length ? lpItems.map(lp => `
+      <tr>
+        <td class="td-main">${lp.title}</td>
+        <td><span class="lp-type-badge ${lp.type === 'service' ? 'badge-blue' : 'badge-green'}">${lp.type === 'service' ? 'サービス' : '趣味'}</span></td>
+        <td><a href="/lp/${lp.slug}" target="_blank" style="color:var(--blue);font-family:var(--mono);font-size:0.75rem;">/lp/${lp.slug}</a></td>
+        <td>
+          <label class="toggle">
+            <input type="checkbox" ${lp.published ? 'checked' : ''} onchange="toggleLp(${lp.id}, this.checked)">
+            <span class="toggle-slider"></span>
+          </label>
+        </td>
+        <td style="font-family:var(--mono);font-size:0.75rem;">${lp.updated}</td>
+        <td><div class="td-actions">
+          <button class="btn-icon" title="編集" onclick="openLpModal(${lp.id})">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M9 2l2 2-7 7H2v-2L9 2z" stroke="currentColor" stroke-width="1.2"/></svg>
+          </button>
+          <button class="btn-icon danger" title="削除" onclick="deleteLp(${lp.id})">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 3h9M5 3V2h3v1M4 3v7a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1V3" stroke="currentColor" stroke-width="1.2"/></svg>
+          </button>
+        </div></td>
+      </tr>
+    `).join('') : '<tr><td colspan="6"><div class="empty-state"><p>LPがありません。「新規追加」から作成してください。</p></div></td></tr>';
+    document.getElementById('lp-tbody').innerHTML = html;
+  }
+
+  function toggleLp(id, val) {
+    const lp = lpItems.find(x => x.id === id);
+    if (lp) { lp.published = val; toast(val ? '公開しました' : '非公開にしました', 'success'); }
+  }
+
+  function deleteLp(id) {
+    const i = lpItems.findIndex(x => x.id === id);
+    if (i > -1) { lpItems.splice(i, 1); renderLp(); toast('削除しました', 'error'); }
+  }
+
+  let editingLpId = null;
+
+  function openLpModal(id) {
+    editingLpId = id || null;
+    document.getElementById('lp-modal-title').textContent = id ? 'LP を編集' : 'LP を新規追加';
+    if (id) {
+      const lp = lpItems.find(x => x.id === id);
+      document.getElementById('lp-title-input').value = lp.title;
+      document.getElementById('lp-type-input').value = lp.type;
+      document.getElementById('lp-slug-input').value = lp.slug;
+      document.getElementById('lp-desc-input').value = lp.desc;
+      document.getElementById('lp-published-input').checked = lp.published;
+    } else {
+      document.getElementById('lp-title-input').value = '';
+      document.getElementById('lp-slug-input').value = '';
+      document.getElementById('lp-desc-input').value = '';
+      document.getElementById('lp-published-input').checked = true;
+    }
+    document.getElementById('lp-modal').classList.add('open');
+  }
+
+  function closeLpModal() { document.getElementById('lp-modal').classList.remove('open'); }
+
+  function saveLp() {
+    const title = document.getElementById('lp-title-input').value.trim();
+    const slug  = document.getElementById('lp-slug-input').value.trim();
+    if (!title || !slug) { toast('タイトルとスラッグは必須です', 'error'); return; }
+    const today = new Date().toISOString().slice(0,10);
+    if (editingLpId) {
+      const lp = lpItems.find(x => x.id === editingLpId);
+      lp.title = title; lp.type = document.getElementById('lp-type-input').value;
+      lp.slug = slug; lp.desc = document.getElementById('lp-desc-input').value;
+      lp.published = document.getElementById('lp-published-input').checked;
+      lp.updated = today;
+    } else {
+      lpItems.push({ id: Date.now(), title, type: document.getElementById('lp-type-input').value,
+        slug, desc: document.getElementById('lp-desc-input').value,
+        published: document.getElementById('lp-published-input').checked, updated: today });
+    }
+    renderLp(); closeLpModal(); toast('保存しました', 'success');
+  }
+
+  /* ============================================
+     Pricing
+  ============================================ */
+  function renderPricing() {
+    const container = document.getElementById('pricing-list');
+    container.innerHTML = pricing.map((p, i) => `
+      <div style="display:grid;grid-template-columns:1fr auto auto auto;gap:10px;align-items:end;margin-bottom:12px;padding:16px;background:var(--bg);border-radius:var(--radius);border:1px solid var(--border);">
+        <div>
+          <label class="form-label">サービス名</label>
+          <input class="form-input" type="text" value="${p.service}" onchange="pricing[${i}].service=this.value">
+        </div>
+        <div>
+          <label class="form-label">単位</label>
+          <select class="form-select" style="width:100px;" onchange="pricing[${i}].unit=this.value">
+            <option ${p.unit==='時間'?'selected':''}>時間</option>
+            <option ${p.unit==='月額'?'selected':''}>月額</option>
+            <option ${p.unit==='案件'?'selected':''}>案件</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label">金額（円〜）</label>
+          <input class="form-input" type="number" value="${p.price}" style="width:130px;" onchange="pricing[${i}].price=+this.value">
+        </div>
+        <div style="padding-bottom:1px;">
+          <button class="btn-icon danger" onclick="removePricingRow(${i})" title="削除">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 3h9M5 3V2h3v1M4 3v7a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1V3" stroke="currentColor" stroke-width="1.2"/></svg>
+          </button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function addPricingRow() {
+    pricing.push({ id: Date.now(), service: '', unit: '時間', price: 0 });
+    renderPricing();
+  }
+
+  function removePricingRow(i) {
+    pricing.splice(i, 1);
+    renderPricing();
+    toast('削除しました', 'error');
+  }
+
+  function savePricing() {
+    renderPricing();
+    toast('料金設定を保存しました', 'success');
+  }
+
+  /* ============================================
+     Toast
+  ============================================ */
+  function toast(msg, type = '') {
+    const el = document.createElement('div');
+    el.className = `toast${type ? ' ' + type : ''}`;
+    el.innerHTML = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none">${type==='success'?'<path d="M2 7l4 4 6-6" stroke="white" stroke-width="1.5"/>':type==='error'?'<path d="M2 2l10 10M12 2L2 12" stroke="white" stroke-width="1.5"/>':'<circle cx="7" cy="7" r="6" stroke="white" stroke-width="1.5"/>'}</svg>${msg}`;
+    document.getElementById('toast-container').appendChild(el);
+    setTimeout(() => el.remove(), 3000);
+  }
+
+  /* ============================================
+     Init
+  ============================================ */
+  function renderAll() {
+    renderContacts();
+    renderLp();
+    renderPricing();
+    updateUnreadBadge();
+  }
+</script>
+</body>
+</html>

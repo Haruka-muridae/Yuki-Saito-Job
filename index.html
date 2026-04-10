@@ -1456,8 +1456,8 @@
 
     <div class="hero-image-wrap">
       <div class="hero-image-frame">
-        <div class="hero-photo">
-          <div class="hero-photo-placeholder">
+        <div class="hero-photo" id="hero-photo-wrap">
+          <div class="hero-photo-placeholder" id="hero-photo-placeholder">
             <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
               <circle cx="40" cy="28" r="16" stroke="#7A7A7A" stroke-width="1.5"/>
               <path d="M10 72c0-16.569 13.431-30 30-30s30 13.431 30 30" stroke="#7A7A7A" stroke-width="1.5"/>
@@ -1495,8 +1495,8 @@
     <div class="container">
       <div class="about-grid">
         <div class="about-image-wrap reveal">
-          <div class="about-img">
-            <div class="about-img-placeholder">
+          <div class="about-img" id="about-photo-wrap">
+            <div class="about-img-placeholder" id="about-photo-placeholder">
               <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="30" cy="20" r="12" stroke="#7A7A7A" stroke-width="1.2"/>
                 <path d="M6 54c0-13.255 10.745-24 24-24s24 10.745 24 24" stroke="#7A7A7A" stroke-width="1.2"/>
@@ -1987,6 +1987,22 @@
           }
           if (c.booking) {
             document.querySelectorAll('a[href*="calendar"]').forEach(el => { el.href = c.booking; });
+          }
+        }
+      } catch(e) {}
+
+      try {
+        // 画像
+        const iRes  = await fetch(GAS_URL + '?action=getImages');
+        const iData = await iRes.json();
+        if (iData?.images) {
+          if (iData.images.hero?.url) {
+            const wrap = document.getElementById('hero-photo-wrap');
+            if (wrap) wrap.innerHTML = '<img src="' + iData.images.hero.url + '" style="width:100%;height:100%;object-fit:cover;position:relative;z-index:1">';
+          }
+          if (iData.images.about?.url) {
+            const wrap = document.getElementById('about-photo-wrap');
+            if (wrap) wrap.innerHTML = '<img src="' + iData.images.about.url + '" style="width:100%;height:100%;object-fit:cover">';
           }
         }
       } catch(e) {}

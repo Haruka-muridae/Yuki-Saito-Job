@@ -169,7 +169,7 @@ td.tdb{color:var(--ink);font-weight:500}
       </div>
       <div class="sb-user">
         <div class="sb-avatar">Y</div>
-        <div><div class="sb-uname">Yuki Saito</div><div class="sb-uemail">yuki.s@tsam-jp.com</div></div>
+        <div><div class="sb-uname">Yuki Saito</div><div class="sb-uemail"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="7c05091715520f3c080f1d1151160c521f1311">[email&#160;protected]</a></div></div>
       </div>
       <nav class="sb-nav">
         <div class="sb-section">メイン</div>
@@ -692,12 +692,3 @@ async function saveSiteSettings(){
 }
 
 function toast(msg,type){
-  const el=document.createElement('div');
-  el.className='toast'+(type?' '+type:'');
-  el.textContent=msg;
-  document.getElementById('toast-wrap').appendChild(el);
-  setTimeout(()=>el.remove(),3000);
-}
-</script>
-</body>
-</html>

@@ -164,7 +164,7 @@ td.td-bold{color:var(--ink);font-weight:500}
       </div>
       <div class="sb-user">
         <div class="sb-avatar">Y</div>
-        <div style="min-width:0"><div class="sb-uname">Yuki Saito</div><div class="sb-uemail">yuki.s@tsam-jp.com</div></div>
+        <div style="min-width:0"><div class="sb-uname">Yuki Saito</div><div class="sb-uemail"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b2cbc7d9db9cc1f2c6c1d3df9fd8c29cd1dddf">[email&#160;protected]</a></div></div>
       </div>
       <nav class="sb-nav">
         <div class="sb-section">メイン</div>
@@ -221,6 +221,8 @@ td.td-bold{color:var(--ink);font-weight:500}
       </div>
 
       <div class="page">
+
+        <!-- DASHBOARD -->
         <div class="panel active" id="panel-dashboard">
           <div class="stats-grid">
             <div class="stat-card"><div class="stat-label">今月の問い合わせ</div><div class="stat-value">3</div><span class="badge b-green">▲ 先月比 +3</span></div>
@@ -232,10 +234,12 @@ td.td-bold{color:var(--ink);font-weight:500}
             <div class="card-head"><span class="card-title">クイックアクション</span></div>
             <div class="card-body">
               <div class="qa-grid">
-                <button class="qa-btn" onclick="go('services')">サービス内容を編集</button>
-                <button class="qa-btn" onclick="go('pricing')">料金を変更する</button>
-                <button class="qa-btn" onclick="go('profile')">プロフィールを更新</button>
-                <button class="qa-btn" onclick="go('lp');openLpModal()">LP を新規追加</button>
+                <button class="qa-btn" onclick="go('services')"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="2" width="12" height="10" rx="1" stroke="currentColor" stroke-width="1.2"/><path d="M3 6h8M3 9h5" stroke="currentColor" stroke-width="1.2"/></svg>サービス内容を編集</button>
+                <button class="qa-btn" onclick="go('pricing')"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.2"/><path d="M7 3.5v7M4.5 6c0-1.1.9-2 2.5-2s2.5.9 2.5 2c0 2-5 2-5 4 0 1.1.9 2 2.5 2s2.5-.9 2.5-2" stroke="currentColor" stroke-width="1.2"/></svg>料金を変更する</button>
+                <button class="qa-btn" onclick="go('profile')"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="5" r="3" stroke="currentColor" stroke-width="1.2"/><path d="M1 13c0-3.314 2.686-6 6-6s6 2.686 6 6" stroke="currentColor" stroke-width="1.2"/></svg>プロフィールを更新</button>
+                <button class="qa-btn" onclick="go('lp');openLpModal()"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="12" height="12" rx="1" stroke="currentColor" stroke-width="1.2"/><path d="M7 4v6M4 7h6" stroke="currentColor" stroke-width="1.2"/></svg>LP を新規追加</button>
+                <button class="qa-btn" onclick="go('contacts')"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 10c0-2.21 1.79-4 4-4h4c2.21 0 4 1.79 4 4" stroke="currentColor" stroke-width="1.2"/><circle cx="7" cy="4" r="3" stroke="currentColor" stroke-width="1.2"/></svg>問い合わせを確認</button>
+                <button class="qa-btn" onclick="go('settings')"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5.5 1h3l.5 2a4 4 0 0 1 1 .6l2-.5 1.5 2.5-1.4 1.3a4 4 0 0 1 0 1.2l1.4 1.3-1.5 2.5-2-.5a4 4 0 0 1-1 .6l-.5 2h-3l-.5-2a4 4 0 0 1-1-.6l-2 .5-1.5-2.5 1.4-1.3a4 4 0 0 1 0-1.2L.5 5.6 2 3.1l2 .5a4 4 0 0 1 1-.6l.5-2z" stroke="currentColor" stroke-width="1.2"/><circle cx="7" cy="7" r="2" stroke="currentColor" stroke-width="1.2"/></svg>CTAリンクを編集</button>
               </div>
             </div>
           </div>
@@ -245,12 +249,14 @@ td.td-bold{color:var(--ink);font-weight:500}
           </div>
         </div>
 
+        <!-- CONTACTS -->
         <div class="panel" id="panel-contacts">
           <div class="card" id="contacts-list-card">
             <div class="card-head">
               <span class="card-title">問い合わせ一覧</span>
               <select class="form-select" style="width:auto;padding:6px 10px" id="contact-filter" onchange="renderContacts()">
                 <option value="all">すべて</option><option value="unread">未読のみ</option>
+                <option value="system">システムコンサル</option><option value="education">教育コンサル</option><option value="other">その他</option>
               </select>
             </div>
             <table><thead><tr><th>氏名</th><th>種別</th><th>受信日時</th><th>ステータス</th><th>操作</th></tr></thead><tbody id="contacts-tbody"></tbody></table>
@@ -259,46 +265,108 @@ td.td-bold{color:var(--ink);font-weight:500}
             <div class="card-head"><span class="card-title" id="detail-name">—</span><button class="btn-s" onclick="closeDetail()">← 一覧に戻る</button></div>
             <div class="card-body">
               <div class="cmeta" id="detail-meta"></div>
+              <div style="font-size:.68rem;font-weight:500;color:var(--ink3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border)">メッセージ内容</div>
               <div class="cmessage" id="detail-msg"></div>
+              <div style="display:flex;gap:8px"><button class="btn-p" onclick="toast('返信メーラーを開きます','ok')">返信する</button><button class="btn-d" onclick="toast('削除しました','ng')">削除</button></div>
             </div>
           </div>
         </div>
 
+        <!-- CALENDAR -->
+        <div class="panel" id="panel-calendar">
+          <div class="card">
+            <div class="card-head"><span class="card-title">Google カレンダー連携設定</span><button class="btn-p" onclick="toast('保存しました','ok')">保存する</button></div>
+            <div class="card-body">
+              <div class="form-group"><label class="form-label">カレンダー ID</label><input class="form-input" type="text" value="yuki.s@tsam-jp.com"><p class="form-hint">Google カレンダーの「設定」→「カレンダーの統合」に記載されたIDを入力してください。</p></div>
+              <div class="form-group"><label class="form-label">予約受付ページ URL</label><input class="form-input" type="url" placeholder="https://calendar.google.com/calendar/appointments/..."><p class="form-hint">「予約スケジュール」で作成した予約ページのURLを貼り付けてください。</p></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-head"><span class="card-title">今後の予約（プレビュー）</span></div>
+            <div class="card-body"><div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:40px;text-align:center;color:var(--ink3);font-size:.82rem">カレンダーIDを設定すると、ここに予約状況が表示されます。</div></div>
+          </div>
+        </div>
+
+        <!-- SERVICES -->
         <div class="panel" id="panel-services">
+          <p style="font-size:.78rem;color:var(--ink3);margin-bottom:16px;line-height:1.7">各サービスページの説明文・「詳しく見る」の遷移先URLを管理します。</p>
           <div id="services-list"></div>
         </div>
 
+        <!-- LP -->
         <div class="panel" id="panel-lp">
           <div class="card">
-            <div class="card-head"><span class="card-title">LP 一覧</span><button class="btn-p" onclick="openLpModal()">新規追加</button></div>
-            <table><thead><tr><th>タイトル</th><th>スラッグ</th><th>公開</th><th>操作</th></tr></thead><tbody id="lp-tbody"></tbody></table>
+            <div class="card-head"><span class="card-title">LP 一覧</span><button class="btn-p" onclick="openLpModal()"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="white" stroke-width="1.5"/></svg>新規追加</button></div>
+            <table><thead><tr><th>タイトル</th><th>種別</th><th>URL</th><th>公開</th><th>更新日</th><th>操作</th></tr></thead><tbody id="lp-tbody"></tbody></table>
           </div>
         </div>
 
-        <div class="panel" id="panel-pricing">
-            <div class="card">
-                <div class="card-head"><span class="card-title">料金設定</span><button class="btn-p" onclick="savePricing()">保存する</button></div>
-                <div class="card-body"><div id="pricing-list"></div><button class="btn-s" onclick="addPricing()">追加</button></div>
-            </div>
-        </div>
-
+        <!-- PROFILE -->
         <div class="panel" id="panel-profile">
-            <div class="card">
-                <div class="card-head"><span class="card-title">プロフィール</span><button class="btn-p" onclick="toast('保存しました','ok')">保存</button></div>
-                <div class="card-body">
-                    <div class="form-group"><label class="form-label">表示名</label><input class="form-input" value="Yuki Saito"></div>
-                    <div class="form-group"><label class="form-label">自己紹介</label><textarea class="form-textarea">こんにちは。</textarea></div>
-                </div>
+          <div class="card" style="margin-bottom:16px">
+            <div class="card-head"><span class="card-title">プロフィール写真</span></div>
+            <div class="card-body">
+              <div class="form-row">
+                <div><div class="form-label" style="margin-bottom:8px">ビジネス写真（トップ・About）</div><div class="upload-area" onclick="toast('ファイル選択ダイアログを開きます','ok')"><svg width="28" height="28" viewBox="0 0 28 28" fill="none" style="margin:0 auto 8px;color:var(--ink3)"><path d="M14 5v14M7 12l7-7 7 7M4 23h20" stroke="currentColor" stroke-width="1.5"/></svg><div style="font-size:.8rem;color:var(--ink2);margin-bottom:3px">クリックして選択</div><div style="font-size:.68rem;color:var(--ink3)">JPG / PNG・推奨: 800×1000px 以上</div></div></div>
+                <div><div class="form-label" style="margin-bottom:8px">カジュアル写真（About・サービス）</div><div class="upload-area" onclick="toast('ファイル選択ダイアログを開きます','ok')"><svg width="28" height="28" viewBox="0 0 28 28" fill="none" style="margin:0 auto 8px;color:var(--ink3)"><path d="M14 5v14M7 12l7-7 7 7M4 23h20" stroke="currentColor" stroke-width="1.5"/></svg><div style="font-size:.8rem;color:var(--ink2);margin-bottom:3px">クリックして選択</div><div style="font-size:.68rem;color:var(--ink3)">JPG / PNG・推奨: 800×1000px 以上</div></div></div>
+              </div>
             </div>
+          </div>
+          <div class="card">
+            <div class="card-head"><span class="card-title">プロフィール文</span><button class="btn-p" onclick="toast('保存しました','ok')">保存する</button></div>
+            <div class="card-body">
+              <div class="form-row"><div class="form-group"><label class="form-label">表示名</label><input class="form-input" value="Yuki Saito"></div><div class="form-group"><label class="form-label">ニックネーム</label><input class="form-input" value="悠"></div></div>
+              <div class="form-group"><label class="form-label">肩書き</label><input class="form-input" value="システム・教育・営業コンサルタント"></div>
+              <div class="form-group"><label class="form-label">自己紹介文</label><textarea class="form-textarea" rows="5">はじめまして、Yuki Saito です。皆さまからは「悠」と呼ばれています。
+
+システムコンサルタント・教育コンサルタント・営業代行者として、個人・中小企業・教育機関のみなさまに向き合ってきました。</textarea></div>
+              <div class="form-row"><div class="form-group"><label class="form-label">メールアドレス（表示用）</label><input class="form-input" type="email" value="yuki.s@tsam-jp.com"></div><div class="form-group"><label class="form-label">X（旧 Twitter）URL</label><input class="form-input" type="url" placeholder="https://x.com/..."></div></div>
+            </div>
+          </div>
         </div>
 
-        <div class="panel" id="panel-settings">
-            <div class="card">
-                <div class="card-head"><span class="card-title">サイト設定</span><button class="btn-p" onclick="toast('保存しました','ok')">保存</button></div>
-                <div class="card-body">
-                    <div class="form-group"><label class="form-label">サイトタイトル</label><input class="form-input" value="Yuki Saito Official"></div>
-                </div>
+        <!-- PRICING -->
+        <div class="panel" id="panel-pricing">
+          <div class="card">
+            <div class="card-head"><span class="card-title">料金表示設定</span><button class="btn-p" onclick="savePricingToSheets()">保存する</button></div>
+            <div class="card-body">
+              <p style="font-size:.78rem;color:var(--ink3);margin-bottom:18px;line-height:1.7">ここで設定した金額がサイトの「料金について」に反映されます。下限・目安の金額を入力してください。</p>
+              <div id="pricing-list"></div>
+              <button class="btn-s" onclick="addPricing()" style="margin-top:8px"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.5"/></svg>サービスを追加</button>
             </div>
+          </div>
+        </div>
+
+        <!-- SETTINGS -->
+        <div class="panel" id="panel-settings">
+          <div class="card" style="margin-bottom:16px">
+            <div class="card-head"><span class="card-title">CTA リンク管理</span><button class="btn-p" onclick="saveCtaLinks()">保存する</button></div>
+            <div class="card-body">
+              <p style="font-size:.78rem;color:var(--ink3);margin-bottom:18px;line-height:1.7">「お問い合わせ」「無料相談」などのボタンの遷移先URLをここで一括管理できます。</p>
+              <div class="form-group"><label class="form-label">【メインCTA】「まずは無料でご相談」ボタン</label><input class="form-input" type="url" value="/contact"><p class="form-hint">トップページのヒーローとCTAセクションのメインボタンに適用されます。</p></div>
+              <div class="form-group"><label class="form-label">【問い合わせフォーム】フォームページ URL</label><input class="form-input" type="url" value="/contact" placeholder="Googleフォーム等の外部URLも可"></div>
+              <div class="form-group"><label class="form-label">【予約ボタン】Google カレンダー予約ページ URL</label><input class="form-input" type="url" placeholder="https://calendar.google.com/calendar/appointments/..."><p class="form-hint">設定すると「予約する」ボタンがこのURLに遷移します。</p></div>
+              <div class="form-group"><label class="form-label">【About】「詳しく見る」ボタン遷移先</label><input class="form-input" type="url" value="/about"></div>
+              <div class="form-row"><div class="form-group"><label class="form-label">SNS / X URL</label><input class="form-input" type="url" placeholder="https://x.com/..."></div><div class="form-group"><label class="form-label">Instagram URL</label><input class="form-input" type="url" placeholder="https://www.instagram.com/..."></div></div>
+            </div>
+          </div>
+          <div class="card" style="margin-bottom:16px">
+            <div class="card-head"><span class="card-title">サイト基本設定</span><button class="btn-p" onclick="toast('設定を保存しました','ok')">保存する</button></div>
+            <div class="card-body">
+              <div class="form-group"><label class="form-label">サイトタイトル</label><input class="form-input" value='Yuki Saito "悠" | システム・教育・営業コンサルタント'></div>
+              <div class="form-group"><label class="form-label">メタディスクリプション</label><textarea class="form-textarea" rows="2">IT導入・教育支援・営業代行のご相談は Yuki Saito（通称：悠）へ。</textarea></div>
+              <div class="form-row"><div class="form-group"><label class="form-label">問い合わせ受信メール</label><input class="form-input" type="email" value="yuki.s@tsam-jp.com"></div><div class="form-group"><label class="form-label">Google Analytics 測定 ID</label><input class="form-input" placeholder="G-XXXXXXXXXX"></div></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-head"><span class="card-title">メンテナンスモード</span></div>
+            <div class="card-body">
+              <div style="display:flex;align-items:center;justify-content:space-between">
+                <div><p style="font-size:.83rem;font-weight:500">メンテナンスモードを有効にする</p><p style="font-size:.72rem;color:var(--ink3);margin-top:3px">有効にすると管理者以外はサイトにアクセスできなくなります。</p></div>
+                <label class="toggle"><input type="checkbox"><span class="tslider"></span></label>
+              </div>
+            </div>
+          </div>
         </div>
 
       </div>
@@ -306,51 +374,92 @@ td.td-bold{color:var(--ink);font-weight:500}
   </div>
 </div>
 
+<!-- LP MODAL -->
 <div class="modal-bg" id="lp-modal">
   <div class="modal">
-    <div class="modal-head"><span class="modal-title" id="lp-modal-title">LP追加</span><button class="modal-close" onclick="closeLpModal()">✕</button></div>
+    <div class="modal-head"><span class="modal-title" id="lp-modal-title">LP を新規追加</span><button class="modal-close" onclick="closeLpModal()">✕</button></div>
     <div class="modal-body">
-      <div class="form-group"><label class="form-label">タイトル</label><input class="form-input" id="lp-ti"></div>
-      <div class="form-group"><label class="form-label">スラッグ</label><input class="form-input" id="lp-sl"></div>
+      <div class="form-group"><label class="form-label">LP タイトル</label><input class="form-input" id="lp-ti" placeholder="例：ITコンサル入門パッケージ"></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">種別</label><select class="form-select" id="lp-ty"><option value="service">サービス LP</option><option value="hobby">趣味 LP</option></select></div>
+        <div class="form-group"><label class="form-label">スラッグ（URL）</label><input class="form-input" id="lp-sl" placeholder="例：it-consul-intro"><p class="form-hint">/lp/<strong>スラッグ</strong> でアクセスされます</p></div>
+      </div>
+      <div class="form-group"><label class="form-label">説明文</label><textarea class="form-textarea" rows="3" id="lp-de" placeholder="このLPの概要を入力してください"></textarea></div>
+      <div style="display:flex;align-items:center;justify-content:space-between"><span class="form-label" style="margin:0">公開する</span><label class="toggle"><input type="checkbox" id="lp-pu" checked><span class="tslider"></span></label></div>
     </div>
-    <div class="modal-foot"><button class="btn-s" onclick="closeLpModal()">閉じる</button><button class="btn-p" onclick="saveLp()">保存</button></div>
+    <div class="modal-foot"><button class="btn-s" onclick="closeLpModal()">キャンセル</button><button class="btn-p" onclick="saveLp()">保存する</button></div>
   </div>
 </div>
 
 <div class="toast-wrap" id="toast-wrap"></div>
 
-<script>
-// --- Data & Mock Logic ---
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 const contacts=[
-  {id:1,name:'田中 一郎',type:'system',email:'tanaka@example.com',date:'2026-04-10 09:12',read:false,msg:'ITシステムの導入について。'},
-  {id:2,name:'佐藤 花子',type:'education',email:'sato@example.com',date:'2026-04-09 14:30',read:false,msg:'学習サポートの相談。'}
+  {id:1,name:'田中 一郎',type:'system',email:'tanaka@example.com',date:'2026-04-10 09:12',read:false,msg:'ITシステムの導入について相談したいです。現在、社内の勤怠管理を紙で行っており、デジタル化を検討しています。'},
+  {id:2,name:'佐藤 花子',type:'education',email:'sato@example.com',date:'2026-04-09 14:30',read:false,msg:'小学3年生の子どもの学習について相談させてください。算数が苦手で、どのようにサポートすれば良いか悩んでいます。'},
+  {id:3,name:'鈴木 誠',type:'other',email:'suzuki@example.com',date:'2026-04-08 18:45',read:false,msg:'営業代行について詳しく聞きたいです。取り扱い可能なジャンルや条件を教えていただけますか？'},
+];
+const lpItems=[
+  {id:1,title:'ITコンサル入門パッケージ',type:'service',slug:'it-consul-intro',desc:'中小企業向けのIT導入入門プラン',published:true,updated:'2026-04-01'},
+  {id:2,title:'写真・カメラの世界',type:'hobby',slug:'photography',desc:'趣味の写真活動について',published:true,updated:'2026-03-20'},
+];
+const pricing=[
+  {id:1,service:'システムコンサルティング',unit:'時間',price:15000},
+  {id:2,service:'教育コンサルティング',unit:'時間',price:8000},
+  {id:3,service:'営業代行',unit:'月額',price:50000},
 ];
 const services=[
-  {id:1,slug:'system',nameJa:'システムコンサル',nameEn:'IT',desc:'説明文...',target:'企業',useExt:false,extUrl:''},
-  {id:2,slug:'education',nameJa:'教育コンサル',nameEn:'Edu',desc:'説明文...',target:'個人',useExt:false,extUrl:''}
+  {id:1,slug:'system',nameJa:'組織システムコンサルティング',nameEn:'System Consulting',desc:'IT導入に関心はあるが進められていない中小企業・個人事業主の方へ。業務の現状をヒアリングし、最適なシステム設計をゼロから一緒に考えます。',target:'IT未経験の経営者・個人事業主',useExt:false,extUrl:''},
+  {id:2,slug:'education',nameJa:'教育・学習支援コンサルティング',nameEn:'Education Consulting',desc:'子どもの教育に悩む保護者・施設管理者の方へ。一人ひとりの特性と課題に寄り添い、継続できる学習環境づくりをサポートします。',target:'保護者・子ども向け施設管理者',useExt:false,extUrl:''},
+  {id:3,slug:'sales',nameJa:'営業代行',nameEn:'Sales Agency',desc:'私が自信を持っておすすめできる商品・サービスのみを取り扱います。量より質を大切に、信頼できる相手への誠実な橋渡しをします。',target:'営業リソース不足の事業者',useExt:false,extUrl:''},
 ];
-const pricing=[{id:1,service:'コンサル',unit:'時間',price:15000}];
-const lpItems=[{id:1,title:'LP1',slug:'lp1',published:true}];
-const tLabel={system:'システム',education:'教育',other:'その他'};
+const tLabel={system:'システムコンサル',education:'教育コンサル',other:'その他'};
 const tBadge={system:'b-blue',education:'b-green',other:'b-gray'};
-const pNames={dashboard:'ダッシュボード',contacts:'問い合わせ',services:'サービス',lp:'LP',profile:'プロフィール',pricing:'料金',settings:'設定',calendar:'予約'};
+const pNames={dashboard:'ダッシュボード',contacts:'問い合わせ',calendar:'予約管理',services:'サービス管理',lp:'LP 管理',profile:'プロフィール',pricing:'料金設定',settings:'サイト設定'};
 
-// --- GAS API Mock (GAS環境がない場合のエラー回避) ---
-async function gasGet(cmd){ console.log('Get:', cmd); return {}; }
-async function gasPost(cmd, data){ console.log('Post:', cmd, data); return {success:true}; }
-
-// --- UI Logic ---
-document.getElementById('btn-login').onclick = () => {
+document.getElementById('btn-login').onclick = async () => {
+  // まず画面を切り替えてからデータ取得（止まらないように）
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('app').style.display = 'block';
   renderAll();
-  toast('ログインしました', 'ok');
-};
+  toast('データ読み込み中...', '');
 
-document.getElementById('btn-logout').onclick = () => {
-  document.getElementById('app').style.display = 'none';
-  document.getElementById('login-screen').style.display = 'flex';
+  // GASから並行取得。失敗してもnullになるだけで止まらない
+  const [cRes, prRes, pRes, sRes, ctaRes] = await Promise.allSettled([
+    gasGet('getContacts'),
+    gasGet('getProfile'),
+    gasGet('getPricing'),
+    gasGet('getServices'),
+    gasGet('getCta'),
+  ]).then(results => results.map(r => r.status === 'fulfilled' ? r.value : null));
+
+  if (cRes?.contacts)  { contacts.length = 0;  cRes.contacts.forEach(c => contacts.push(c)); }
+  if (pRes?.pricing)   { pricing.length = 0;   pRes.pricing.forEach(p => pricing.push({id:Date.now(),...p})); }
+  if (sRes?.services)  { sRes.services.forEach(s => { const e = services.find(x=>x.slug===s.slug); if(e) Object.assign(e,s); }); }
+  if (ctaRes?.cta) {
+    const inputs = document.querySelectorAll('#panel-settings .form-input[type=url]');
+    const keys = ['mainCta','contactForm','booking','aboutDetail','twitter','instagram'];
+    keys.forEach((k,i) => { if(inputs[i]) inputs[i].value = ctaRes.cta[k] || ''; });
+  }
+  if (prRes?.profile) {
+    const p = prRes.profile;
+    const ti = document.querySelectorAll('#panel-profile input[type=text]');
+    const em = document.querySelector('#panel-profile input[type=email]');
+    const ur = document.querySelector('#panel-profile input[type=url]');
+    const ta = document.querySelector('#panel-profile textarea');
+    if(ti[0]) ti[0].value = p.displayName || '';
+    if(ti[1]) ti[1].value = p.nickname    || '';
+    if(ti[2]) ti[2].value = p.title       || '';
+    if(ta)    ta.value    = p.bio         || '';
+    if(em)    em.value    = p.email       || '';
+    if(ur)    ur.value    = p.twitterUrl  || '';
+  }
+
+  renderAll();
+  toast('データを読み込みました', 'ok');
 };
+document.getElementById('btn-logout').onclick=()=>{document.getElementById('app').style.display='none';document.getElementById('login-screen').style.display='flex';toast('ログアウトしました','ok');};
+document.querySelectorAll('.nav-btn[data-panel]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.panel)));
 
 function go(name){
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
@@ -358,99 +467,137 @@ function go(name){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.getElementById('panel-'+name)?.classList.add('active');
   document.getElementById('topbar-title').textContent=pNames[name]||name;
-}
-
-function renderAll(){
-  renderContacts();
-  renderServices();
-  renderLp();
-  renderPricing();
-  updateBadge();
+  closeDetail();
 }
 
 function renderContacts(){
-  const tbody = document.getElementById('contacts-tbody');
-  if(!tbody) return;
-  tbody.innerHTML = contacts.map(c=>`
-    <tr onclick="openDetail(${c.id})">
-      <td class="td-bold">${c.name}</td>
-      <td>${tLabel[c.type]}</td>
+  const f=document.getElementById('contact-filter')?.value||'all';
+  const list=contacts.filter(c=>f==='all'||(f==='unread'&&!c.read)||c.type===f);
+  document.getElementById('contacts-tbody').innerHTML=list.length?list.map(c=>`
+    <tr style="cursor:pointer" onclick="openDetail(${c.id})">
+      <td class="td-bold">${c.name}${!c.read?' <span class="badge b-yellow" style="margin-left:6px;font-size:.6rem">未読</span>':''}</td>
+      <td><span class="badge ${tBadge[c.type]}">${tLabel[c.type]}</span></td>
       <td>${c.date}</td>
-      <td>${c.read?'既読':'未読'}</td>
-      <td><button class="btn-icon">👁</button></td>
+      <td>${c.read?'<span class="badge b-gray">既読</span>':'<span class="badge b-yellow">未読</span>'}</td>
+      <td><div class="td-actions">
+        <button class="btn-icon" onclick="event.stopPropagation();openDetail(${c.id})"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.2"/><path d="M6 4v3l1.5 1" stroke="currentColor" stroke-width="1.2"/></svg></button>
+        <button class="btn-icon d" onclick="event.stopPropagation();toast('削除しました','ng')"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 3h8M5 3V2h2v1M3.5 3v6a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1V3" stroke="currentColor" stroke-width="1.2"/></svg></button>
+      </div></td>
+    </tr>`).join(''):'<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--ink3)">問い合わせはありません</td></tr>';
+  document.getElementById('dash-contacts').innerHTML=contacts.slice(0,3).map(c=>`
+    <tr style="cursor:pointer" onclick="go('contacts');openDetail(${c.id})">
+      <td class="td-bold">${c.name}</td>
+      <td><span class="badge ${tBadge[c.type]}">${tLabel[c.type]}</span></td>
+      <td>${c.date}</td>
+      <td>${c.read?'<span class="badge b-gray">既読</span>':'<span class="badge b-yellow">未読</span>'}</td>
     </tr>`).join('');
-
-  document.getElementById('dash-contacts').innerHTML = contacts.slice(0,3).map(c=>`
-    <tr><td>${c.name}</td><td>${tLabel[c.type]}</td><td>${c.date}</td><td>${c.read?'既読':'未読'}</td></tr>
-  `).join('');
 }
 
 function openDetail(id){
-  const c=contacts.find(x=>x.id===id); if(!c)return;
-  c.read=true; renderContacts(); updateBadge();
+  const c=contacts.find(x=>x.id===id);if(!c)return;
+  c.read=true;updateBadge();renderContacts();
   document.getElementById('detail-name').textContent=c.name;
+  document.getElementById('detail-meta').innerHTML=`
+    <div class="cmeta-item"><span class="cmeta-label">種別</span><span class="cmeta-value">${tLabel[c.type]}</span></div>
+    <div class="cmeta-item"><span class="cmeta-label">メール</span><span class="cmeta-value"><a href="mailto:${c.email}" style="color:var(--blue)">${c.email}</a></span></div>
+    <div class="cmeta-item"><span class="cmeta-label">受信日時</span><span class="cmeta-value">${c.date}</span></div>`;
   document.getElementById('detail-msg').textContent=c.msg;
   document.getElementById('contacts-list-card').style.display='none';
   document.getElementById('contact-detail').classList.add('open');
 }
-
 function closeDetail(){
-  document.getElementById('contact-detail').classList.remove('open');
-  document.getElementById('contacts-list-card').style.display='block';
+  document.getElementById('contact-detail')?.classList.remove('open');
+  const lc=document.getElementById('contacts-list-card');if(lc)lc.style.display='';
 }
-
 function updateBadge(){
   const n=contacts.filter(c=>!c.read).length;
-  const b=document.getElementById('unread-badge');
-  if(b){ b.textContent=n; b.style.display=n?'inline':'none'; }
+  const b=document.getElementById('unread-badge');b.textContent=n;b.style.display=n?'':'none';
 }
 
 function renderServices(){
-  document.getElementById('services-list').innerHTML = services.map((s,i)=>`
-    <div class="card"><div class="card-head">${s.nameJa}</div><div class="card-body">
-      <input class="form-input" value="${s.nameJa}" onchange="services[${i}].nameJa=this.value">
-      <textarea class="form-textarea" onchange="services[${i}].desc=this.value">${s.desc}</textarea>
-    </div></div>`).join('');
+  document.getElementById('services-list').innerHTML=services.map((s,i)=>`
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-head">
+        <div><span class="card-title">${s.nameJa}</span><span style="font-family:'DM Mono',monospace;font-size:.62rem;color:var(--ink3);margin-left:10px">/services/${s.slug}</span></div>
+        <button class="btn-p" onclick="saveServiceToSheets(${i})">保存する</button>
+      </div>
+      <div class="card-body">
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">日本語名</label><input class="form-input" value="${s.nameJa}" onchange="services[${i}].nameJa=this.value"></div>
+          <div class="form-group"><label class="form-label">英語名</label><input class="form-input" value="${s.nameEn}" onchange="services[${i}].nameEn=this.value"></div>
+        </div>
+        <div class="form-group"><label class="form-label">概要説明文</label><textarea class="form-textarea" rows="3" onchange="services[${i}].desc=this.value">${s.desc}</textarea></div>
+        <div class="form-group"><label class="form-label">対象ターゲット</label><input class="form-input" value="${s.target}" onchange="services[${i}].target=this.value"></div>
+        <div class="url-box">
+          <div class="url-box-head">
+            <div><div class="url-box-title">「詳しく見る」の遷移先を外部URLに変更する</div><div class="url-box-sub">ON にすると /services/${s.slug} ではなく入力したURLに遷移します</div></div>
+            <label class="toggle"><input type="checkbox" ${s.useExt?'checked':''} onchange="services[${i}].useExt=this.checked;renderServices()"><span class="tslider"></span></label>
+          </div>
+          <div class="url-fields ${s.useExt?'on':''}">
+            <label class="form-label">外部リンク URL</label>
+            <input class="form-input" type="url" value="${s.extUrl}" placeholder="https://example.com/..." onchange="services[${i}].extUrl=this.value">
+            <p class="form-hint">Notion・STUDIO・外部予約ページなど任意のURLを設定できます。</p>
+          </div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+function saveService(i) { saveServiceToSheets(i); }
+async function saveServiceToSheets(i) {
+  const res = await gasPost('saveServices', { services: [services[i]] });
+  if (res?.success) toast('「' + services[i].nameJa + '」を保存しました', 'ok');
 }
 
 function renderLp(){
-  document.getElementById('lp-tbody').innerHTML = lpItems.map(lp=>`
-    <tr><td>${lp.title}</td><td>${lp.slug}</td><td>${lp.published?'ON':'OFF'}</td><td><button class="btn-icon">📝</button></td></tr>
-  `).join('');
+  document.getElementById('lp-tbody').innerHTML=lpItems.length?lpItems.map(lp=>`
+    <tr>
+      <td class="td-bold">${lp.title}</td>
+      <td><span class="badge ${lp.type==='service'?'b-blue':'b-green'}" style="font-family:'DM Mono',monospace;font-size:.62rem">${lp.type==='service'?'サービス':'趣味'}</span></td>
+      <td><a href="/lp/${lp.slug}" target="_blank" style="color:var(--blue);font-family:'DM Mono',monospace;font-size:.72rem">/lp/${lp.slug}</a></td>
+      <td><label class="toggle"><input type="checkbox" ${lp.published?'checked':''} onchange="lpItems.find(x=>x.id===${lp.id}).published=this.checked;toast(this.checked?'公開しました':'非公開にしました','ok')"><span class="tslider"></span></label></td>
+      <td style="font-family:'DM Mono',monospace;font-size:.72rem">${lp.updated}</td>
+      <td><div class="td-actions">
+        <button class="btn-icon" onclick="openLpModal(${lp.id})"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M8 2l2 2-6 6H2V8l6-6z" stroke="currentColor" stroke-width="1.2"/></svg></button>
+        <button class="btn-icon d" onclick="deleteLp(${lp.id})"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 3h8M5 3V2h2v1M3.5 3v6a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1V3" stroke="currentColor" stroke-width="1.2"/></svg></button>
+      </div></td>
+    </tr>`).join(''):'<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--ink3)">LPがありません。「新規追加」から作成してください。</td></tr>';
+}
+function deleteLp(id){const i=lpItems.findIndex(x=>x.id===id);if(i>-1){lpItems.splice(i,1);renderLp();toast('削除しました','ng');}}
+let editLpId=null;
+function openLpModal(id){
+  editLpId=id||null;
+  document.getElementById('lp-modal-title').textContent=id?'LP を編集':'LP を新規追加';
+  if(id){const lp=lpItems.find(x=>x.id===id);document.getElementById('lp-ti').value=lp.title;document.getElementById('lp-ty').value=lp.type;document.getElementById('lp-sl').value=lp.slug;document.getElementById('lp-de').value=lp.desc;document.getElementById('lp-pu').checked=lp.published;}
+  else{['lp-ti','lp-sl','lp-de'].forEach(id=>document.getElementById(id).value='');document.getElementById('lp-pu').checked=true;}
+  document.getElementById('lp-modal').classList.add('open');
+}
+function closeLpModal(){document.getElementById('lp-modal').classList.remove('open');}
+function saveLp(){
+  const ti=document.getElementById('lp-ti').value.trim(),sl=document.getElementById('lp-sl').value.trim();
+  if(!ti||!sl){toast('タイトルとスラッグは必須です','ng');return;}
+  const today=new Date().toISOString().slice(0,10);
+  if(editLpId){const lp=lpItems.find(x=>x.id===editLpId);Object.assign(lp,{title:ti,type:document.getElementById('lp-ty').value,slug:sl,desc:document.getElementById('lp-de').value,published:document.getElementById('lp-pu').checked,updated:today});}
+  else lpItems.push({id:Date.now(),title:ti,type:document.getElementById('lp-ty').value,slug:sl,desc:document.getElementById('lp-de').value,published:document.getElementById('lp-pu').checked,updated:today});
+  renderLp();closeLpModal();toast('保存しました','ok');
 }
 
 function renderPricing(){
-  document.getElementById('pricing-list').innerHTML = pricing.map((p,i)=>`
-    <div style="margin-bottom:10px">
-      <input class="form-input" value="${p.service}" style="width:150px">
-      <input class="form-input" type="number" value="${p.price}" style="width:100px">
+  document.getElementById('pricing-list').innerHTML=pricing.map((p,i)=>`
+    <div style="display:grid;grid-template-columns:1fr 100px 130px 32px;gap:10px;align-items:end;margin-bottom:10px;padding:14px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r)">
+      <div><label class="form-label">サービス名</label><input class="form-input" value="${p.service}" onchange="pricing[${i}].service=this.value"></div>
+      <div><label class="form-label">単位</label><select class="form-select" onchange="pricing[${i}].unit=this.value"><option ${p.unit==='時間'?'selected':''}>時間</option><option ${p.unit==='月額'?'selected':''}>月額</option><option ${p.unit==='案件'?'selected':''}>案件</option></select></div>
+      <div><label class="form-label">金額（円〜）</label><input class="form-input" type="number" value="${p.price}" onchange="pricing[${i}].price=+this.value"></div>
+      <div style="padding-bottom:1px"><button class="btn-icon d" onclick="pricing.splice(${i},1);renderPricing();toast('削除しました','ng')"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 3h8M5 3V2h2v1M3.5 3v6a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1V3" stroke="currentColor" stroke-width="1.2"/></svg></button></div>
     </div>`).join('');
 }
-
-function addPricing(){ pricing.push({id:Date.now(),service:'',unit:'時間',price:0}); renderPricing(); }
-async function savePricing(){ toast('保存中...',''); await gasPost('savePricing',{pricing}); toast('保存完了','ok'); }
-
-function openLpModal(){ document.getElementById('lp-modal').classList.add('open'); }
-function closeLpModal(){ document.getElementById('lp-modal').classList.remove('open'); }
-function saveLp(){
-  const ti=document.getElementById('lp-ti').value, sl=document.getElementById('lp-sl').value;
-  lpItems.push({id:Date.now(), title:ti, slug:sl, published:true});
-  renderLp(); closeLpModal(); toast('追加しました','ok');
+function addPricing(){pricing.push({id:Date.now(),service:'',unit:'時間',price:0});renderPricing();}
+function savePricing() { savePricingToSheets(); }
+async function savePricingToSheets() {
+  const res = await gasPost('savePricing', { pricing });
+  if (res?.success) { renderPricing(); toast('料金設定を保存しました', 'ok'); }
 }
 
-function toast(msg,type){
-  const wrap=document.getElementById('toast-wrap');
+function toast(msg,type=''){
   const el=document.createElement('div');
-  el.className='toast '+(type||'');
-  el.textContent=msg;
-  wrap.appendChild(el);
-  setTimeout(()=>el.remove(),3000);
-}
-
-// ナビゲーションの初期化
-document.querySelectorAll('.nav-btn[data-panel]').forEach(b=> {
-  b.onclick = () => go(b.dataset.panel);
-});
-</script>
-</body>
-</html>
+  el.className='toast'+(type?' '+type:'');
+  el.textCont

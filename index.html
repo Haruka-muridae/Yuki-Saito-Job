@@ -897,8 +897,8 @@
 
     .target-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: clamp(40px, 6vw, 80px);
+      grid-template-columns: repeat(3, 1fr);
+      gap: clamp(24px, 4vw, 48px);
       margin-top: clamp(48px, 8vh, 80px);
     }
 
@@ -956,7 +956,7 @@
       background: var(--gold);
     }
 
-    @media (max-width: 640px) {
+    @media (max-width: 900px) {
       .target-grid {
         grid-template-columns: 1fr;
       }
@@ -1599,6 +1599,17 @@
             <li>学習習慣が身につかず困っている</li>
             <li>子ども向け施設で教育プログラムを整備したい</li>
             <li>子どもの特性に合った指導法を知りたい</li>
+          </ul>
+        </div>
+
+        <div class="target-group reveal reveal-delay-3">
+          <p class="target-group-label">Sales</p>
+          <p class="target-heading">営業リソースに<br>お困りの事業者の方</p>
+          <ul class="target-list">
+            <li>営業に割く時間・人手が足りない</li>
+            <li>自社商品の魅力をうまく伝えられていない</li>
+            <li>信頼できる営業パートナーを探している</li>
+            <li>新規顧客の開拓が進まず困っている</li>
           </ul>
         </div>
       </div>

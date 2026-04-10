@@ -246,31 +246,34 @@
     }
 
     /* ============================================
-       Hero
+       Hero (修正箇所)
     ============================================ */
-    .hero {
-      min-height: 100svh;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      align-items: center;
-      padding-top: 68px;
+    .hero-section {
       position: relative;
       overflow: hidden;
     }
 
-    .hero::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background:
-        repeating-linear-gradient(
-          90deg,
-          transparent,
-          transparent calc(100% / 12 - 1px),
-          rgba(28,43,58,0.04) calc(100% / 12 - 1px),
-          rgba(28,43,58,0.04) calc(100% / 12)
-        );
-      pointer-events: none;
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      padding-top: 68px;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding-left: clamp(20px, 5vw, 60px);
+      padding-right: clamp(20px, 5vw, 60px);
+      position: relative;
+      z-index: 1;
+      /* 空白削除のための修正：min-heightを削除または縮小 */
+      min-height: auto; 
+    }
+
+    @media (min-width: 769px) {
+      .hero { 
+        /* 固定の100svhをやめ、コンテンツに応じた余白を設定 */
+        padding-top: 120px;
+        padding-bottom: 100px; 
+      }
     }
 
     .hero-bg-text {
@@ -291,7 +294,8 @@
     }
 
     .hero-content {
-      padding: clamp(60px, 10vh, 120px) 0;
+      /* パディングを調整して空白を制御 */
+      padding: 40px 0;
       position: relative;
       z-index: 1;
     }
@@ -393,7 +397,6 @@
     .hero-image-wrap {
       position: relative;
       height: 100%;
-      min-height: 580px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -523,18 +526,23 @@
     }
 
     @media (max-width: 768px) {
+      .hero-section {
+        height: auto;
+      }
       .hero {
         grid-template-columns: 1fr;
         grid-template-rows: auto auto;
         min-height: auto;
-        padding-bottom: 80px;
+        height: auto;
+        padding-top: 88px;
+        padding-bottom: 40px;
       }
-
-      .hero-bg-text { display: none; }
 
       .hero-image-wrap {
         min-height: auto;
-        padding: 60px 0 40px;
+        height: auto;
+        padding: 0 0 0;
+        margin-top: -20px;
         order: -1;
       }
 
@@ -542,8 +550,10 @@
         width: clamp(220px, 65vw, 320px);
       }
 
+      .hero-badge { display: none; }
+
       .hero-content {
-        padding: 0 0 40px;
+        padding: 24px 0 16px;
       }
 
       .hero-scroll { display: none; }
@@ -684,8 +694,6 @@
       border-bottom: 1px solid var(--gold);
       pointer-events: none;
     }
-
-    .about-content { }
 
     .about-heading {
       font-family: var(--serif-ja);
@@ -1205,8 +1213,6 @@
       margin-bottom: clamp(24px, 4vh, 40px);
     }
 
-    .footer-brand {}
-
     .footer-logo-name {
       font-family: var(--serif-ja);
       font-size: 1.1rem;
@@ -1358,10 +1364,8 @@
 </head>
 <body>
 
-  <!-- ==================== HEADER ==================== -->
   <header id="main-header">
     <div class="logo">
-      <!-- Logo SVG (和モダン「悠」) -->
       <svg class="logo-mark" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
         <rect x="1" y="1" width="36" height="36" stroke="#1C2B3A" stroke-width="1"/>
         <rect x="4" y="4" width="30" height="30" stroke="#C9A96E" stroke-width="0.5" opacity="0.6"/>
@@ -1385,7 +1389,6 @@
     </div>
   </header>
 
-  <!-- Mobile Menu -->
   <div class="mobile-menu" id="mobile-menu">
     <a href="#about" class="mobile-link">About</a>
     <a href="#services" class="mobile-link">Services</a>
@@ -1393,57 +1396,48 @@
     <a href="#contact" class="nav-cta mobile-link">お問い合わせ</a>
   </div>
 
-  <!-- ==================== HERO ==================== -->
-  <section class="hero">
-    <div class="container" style="display:contents;">
-      <div class="hero-content container">
-        <p class="hero-eyebrow">Consultant · Educator · Partner</p>
-        <h1 class="hero-catch">
-          あなたの時間を、<br>
-          もっと<em>価値あるもの</em>へ。
-        </h1>
-        <p class="hero-sub">
-          システム導入・教育支援・営業代行の3領域で、<br>
-          完全オーダーメイドの伴走を提供します。<br>
-          まずは、一度お話しください。
-        </p>
-        <div class="hero-btns">
-          <a href="#contact" class="btn-primary">
-            まずは無料でご相談
-            <span class="btn-arrow">→</span>
-          </a>
-          <a href="#services" class="btn-secondary">サービスを見る</a>
-        </div>
-      </div>
-
-      <div class="hero-image-wrap">
-        <div class="hero-image-frame">
-          <div class="hero-photo">
-            <div class="hero-photo-placeholder">
-              <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="40" cy="28" r="16" stroke="#7A7A7A" stroke-width="1.5"/>
-                <path d="M10 72c0-16.569 13.431-30 30-30s30 13.431 30 30" stroke="#7A7A7A" stroke-width="1.5"/>
-              </svg>
-              <span>Photo</span>
-            </div>
-          </div>
-          <div class="hero-badge">
-            <div class="hero-badge-label">Mission</div>
-            <div class="hero-badge-text">多くの幸せを<br>掴むために。</div>
-          </div>
-        </div>
+  <section class="hero-section">
+  <div class="hero">
+    <div class="hero-content">
+      <p class="hero-eyebrow">Consultant · Educator · Partner</p>
+      <h1 class="hero-catch">
+        あなたの時間を、<br>
+        もっと<em>価値あるもの</em>へ。
+      </h1>
+      <p class="hero-sub">
+        システム導入・教育支援・営業代行の3領域で、<br>
+        完全オーダーメイドの伴走を提供します。<br>
+        まずは、一度お話しください。
+      </p>
+      <div class="hero-btns">
+        <a href="#contact" class="btn-primary">
+          まずは無料でご相談
+          <span class="btn-arrow">→</span>
+        </a>
+        <a href="#services" class="btn-secondary">サービスを見る</a>
       </div>
     </div>
 
-    <div class="hero-bg-text">Consult</div>
-
-    <div class="hero-scroll">
-      <span>Scroll</span>
-      <div class="scroll-line"></div>
+    <div class="hero-image-wrap">
+      <div class="hero-image-frame">
+        <div class="hero-photo">
+          <div class="hero-photo-placeholder">
+            <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="40" cy="28" r="16" stroke="#7A7A7A" stroke-width="1.5"/>
+              <path d="M10 72c0-16.569 13.431-30 30-30s30 13.431 30 30" stroke="#7A7A7A" stroke-width="1.5"/>
+            </svg>
+            <span>Photo</span>
+          </div>
+        </div>
+        <div class="hero-badge">
+          <div class="hero-badge-label">Mission</div>
+          <div class="hero-badge-text">多くの幸せを<br>掴むために。</div>
+        </div>
+      </div>
     </div>
+  </div>
   </section>
 
-  <!-- ==================== MISSION ==================== -->
   <section class="section-mission">
     <div class="container">
       <div class="mission-inner reveal">
@@ -1461,7 +1455,6 @@
     </div>
   </section>
 
-  <!-- ==================== ABOUT ==================== -->
   <section class="section-about" id="about">
     <div class="container">
       <div class="about-grid">
@@ -1510,7 +1503,6 @@
     </div>
   </section>
 
-  <!-- ==================== SERVICES ==================== -->
   <section class="section-services" id="services">
     <div class="container">
       <div class="section-header reveal">
@@ -1580,7 +1572,6 @@
     </div>
   </section>
 
-  <!-- ==================== TARGET ==================== -->
   <section class="section-target">
     <div class="container">
       <div class="section-header reveal">
@@ -1614,7 +1605,6 @@
     </div>
   </section>
 
-  <!-- ==================== FLOW ==================== -->
   <section class="section-flow" id="flow">
     <div class="container">
       <div class="section-header reveal">
@@ -1656,7 +1646,6 @@
     </div>
   </section>
 
-  <!-- ==================== STRENGTHS ==================== -->
   <section class="section-strengths">
     <div class="container">
       <div class="section-header reveal">
@@ -1696,7 +1685,6 @@
     </div>
   </section>
 
-  <!-- ==================== PRICING TEASER ==================== -->
   <section style="padding: clamp(60px, 10vh, 100px) 0; background: var(--cream);">
     <div class="container">
       <div class="reveal" style="max-width: 640px; margin: 0 auto; text-align: center;">
@@ -1716,7 +1704,6 @@
     </div>
   </section>
 
-  <!-- ==================== CTA ==================== -->
   <section class="section-cta" id="contact">
     <div class="container">
       <div class="cta-inner reveal">
@@ -1739,7 +1726,6 @@
     </div>
   </section>
 
-  <!-- ==================== FOOTER ==================== -->
   <footer>
     <div class="container">
       <div class="footer-inner">
@@ -1784,7 +1770,6 @@
     </div>
   </footer>
 
-  <!-- ==================== FLOATING CTA ==================== -->
   <div class="floating-cta" id="floating-cta">
     <a href="#contact" class="floating-btn">
       <span class="floating-dot"></span>
@@ -1792,7 +1777,6 @@
     </a>
   </div>
 
-  <!-- ==================== JS ==================== -->
   <script>
     // Header scroll
     const header = document.getElementById('main-header');

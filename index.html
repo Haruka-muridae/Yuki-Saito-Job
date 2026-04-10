@@ -851,10 +851,12 @@
       letter-spacing: 0.15em;
       text-transform: uppercase;
       color: var(--gold);
-      display: flex;
+      display: inline-flex;
       align-items: center;
       gap: 8px;
       transition: gap 0.25s ease;
+      text-decoration: none;
+      cursor: pointer;
     }
 
     .service-card:hover .service-link { gap: 14px; }
@@ -862,6 +864,7 @@
     .service-link::after {
       content: '→';
       font-size: 0.9rem;
+      text-decoration: none;
     }
 
     .services-cta {
@@ -1530,7 +1533,7 @@
             IT導入に関心はあるが進められていない中小企業・個人事業主の方へ。
             業務の現状をヒアリングし、最適なシステム設計をゼロから一緒に考えます。
           </p>
-          <span class="service-link">詳しく見る</span>
+          <a href="/services/system" class="service-link">詳しく見る</a>
         </div>
 
         <div class="service-card reveal reveal-delay-2">
@@ -1546,7 +1549,7 @@
             子どもの教育に悩む保護者・施設管理者の方へ。
             一人ひとりの特性と課題に寄り添い、継続できる学習環境づくりをサポートします。
           </p>
-          <span class="service-link">詳しく見る</span>
+          <a href="/services/education" class="service-link">詳しく見る</a>
         </div>
 
         <div class="service-card reveal reveal-delay-3">
@@ -1562,7 +1565,7 @@
             私が自信を持っておすすめできる商品・サービスのみを取り扱います。
             量より質を大切に、信頼できる相手への誠実な橋渡しをします。
           </p>
-          <span class="service-link">詳しく見る</span>
+          <a href="/services/sales" class="service-link">詳しく見る</a>
         </div>
       </div>
 

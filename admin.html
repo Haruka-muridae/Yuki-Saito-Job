@@ -164,7 +164,7 @@ td.td-bold{color:var(--ink);font-weight:500}
       </div>
       <div class="sb-user">
         <div class="sb-avatar">Y</div>
-        <div style="min-width:0"><div class="sb-uname">Yuki Saito</div><div class="sb-uemail">yuki.s@tsam-jp.com</div></div>
+        <div style="min-width:0"><div class="sb-uname">Yuki Saito</div><div class="sb-uemail"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b2cbc7d9db9cc1f2c6c1d3df9fd8c29cd1dddf">[email&#160;protected]</a></div></div>
       </div>
       <nav class="sb-nav">
         <div class="sb-section">メイン</div>
@@ -328,7 +328,7 @@ td.td-bold{color:var(--ink);font-weight:500}
         <!-- PRICING -->
         <div class="panel" id="panel-pricing">
           <div class="card">
-            <div class="card-head"><span class="card-title">料金表示設定</span><button class="btn-p" onclick="savePricing()">保存する</button></div>
+            <div class="card-head"><span class="card-title">料金表示設定</span><button class="btn-p" onclick="savePricingToSheets()">保存する</button></div>
             <div class="card-body">
               <p style="font-size:.78rem;color:var(--ink3);margin-bottom:18px;line-height:1.7">ここで設定した金額がサイトの「料金について」に反映されます。下限・目安の金額を入力してください。</p>
               <div id="pricing-list"></div>
@@ -340,7 +340,7 @@ td.td-bold{color:var(--ink);font-weight:500}
         <!-- SETTINGS -->
         <div class="panel" id="panel-settings">
           <div class="card" style="margin-bottom:16px">
-            <div class="card-head"><span class="card-title">CTA リンク管理</span><button class="btn-p" onclick="toast('CTAリンクを保存しました','ok')">保存する</button></div>
+            <div class="card-head"><span class="card-title">CTA リンク管理</span><button class="btn-p" onclick="saveCtaToSheets()">保存する</button></div>
             <div class="card-body">
               <p style="font-size:.78rem;color:var(--ink3);margin-bottom:18px;line-height:1.7">「お問い合わせ」「無料相談」などのボタンの遷移先URLをここで一括管理できます。</p>
               <div class="form-group"><label class="form-label">【メインCTA】「まずは無料でご相談」ボタン</label><input class="form-input" type="url" value="/contact"><p class="form-hint">トップページのヒーローとCTAセクションのメインボタンに適用されます。</p></div>
@@ -393,7 +393,7 @@ td.td-bold{color:var(--ink);font-weight:500}
 
 <div class="toast-wrap" id="toast-wrap"></div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 const contacts=[
   {id:1,name:'田中 一郎',type:'system',email:'tanaka@example.com',date:'2026-04-10 09:12',read:false,msg:'ITシステムの導入について相談したいです。現在、社内の勤怠管理を紙で行っており、デジタル化を検討しています。'},
   {id:2,name:'佐藤 花子',type:'education',email:'sato@example.com',date:'2026-04-09 14:30',read:false,msg:'小学3年生の子どもの学習について相談させてください。算数が苦手で、どのようにサポートすれば良いか悩んでいます。'},
@@ -479,7 +479,7 @@ function renderServices(){
     <div class="card" style="margin-bottom:14px">
       <div class="card-head">
         <div><span class="card-title">${s.nameJa}</span><span style="font-family:'DM Mono',monospace;font-size:.62rem;color:var(--ink3);margin-left:10px">/services/${s.slug}</span></div>
-        <button class="btn-p" onclick="saveService(${i})">保存する</button>
+        <button class="btn-p" onclick="saveServiceToSheets(${i})">保存する</button>
       </div>
       <div class="card-body">
         <div class="form-row">
@@ -552,12 +552,4 @@ function savePricing(){renderPricing();toast('料金設定を保存しました'
 function toast(msg,type=''){
   const el=document.createElement('div');
   el.className='toast'+(type?' '+type:'');
-  el.textContent=msg;
-  document.getElementById('toast-wrap').appendChild(el);
-  setTimeout(()=>el.remove(),3000);
-}
-
-function renderAll(){renderContacts();renderLp();renderPricing();renderServices();updateBadge();}
-</script>
-</body>
-</html>
+  el.textCont

@@ -1839,13 +1839,17 @@
   </div>
 
   <script>
-    // Header scroll
+    // ============================================
+    // UI: Header scroll
+    // ============================================
     const header = document.getElementById('main-header');
     window.addEventListener('scroll', () => {
       header.classList.toggle('scrolled', window.scrollY > 40);
     });
 
-    // Hamburger
+    // ============================================
+    // UI: Hamburger menu
+    // ============================================
     const hamburger = document.getElementById('hamburger');
     const mobileMenu = document.getElementById('mobile-menu');
     hamburger.addEventListener('click', () => {
@@ -1860,7 +1864,9 @@
       });
     });
 
-    // Scroll reveal
+    // ============================================
+    // UI: Scroll reveal
+    // ============================================
     const reveals = document.querySelectorAll('.reveal');
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
@@ -1873,13 +1879,29 @@
 
     reveals.forEach(el => observer.observe(el));
 
-    // Floating CTA
+    // ============================================
+    // UI: Floating CTA
+    // ============================================
     const floatingCta = document.getElementById('floating-cta');
     window.addEventListener('scroll', () => {
       floatingCta.classList.toggle('visible', window.scrollY > 400);
     });
 
+    // ============================================
+    // GAS設定
+    // ============================================
     const GAS_URL = 'https://script.google.com/macros/s/AKfycbwrUL3bdShr7q9CzaYp1_-__XPoAOXXd7MpTBVqRgslSWspKu1FJGqjhPUdyAGUw3kW/exec';
+
+    // ============================================
+    // お問い合わせフォーム送信
+    // ============================================
+    function showResult(el, type, msg) {
+      el.style.display = 'block';
+      el.style.background = type === 'success' ? '#EBF7F2' : '#FDEEEE';
+      el.style.color      = type === 'success' ? '#2D9C6E' : '#D94F4F';
+      el.style.border     = type === 'success' ? '1px solid #2D9C6E' : '1px solid #D94F4F';
+      el.textContent = msg;
+    }
 
     async function submitContactForm() {
       const name    = document.getElementById('cf-name').value.trim();
@@ -1904,57 +1926,63 @@
       btn.style.pointerEvents = 'none';
 
       try {
-        const res = await fetch(GAS_URL, {
+        const res  = await fetch(GAS_URL, {
           method: 'POST',
           body: JSON.stringify({ action: 'submitContact', name, email, type, message }),
         });
         const data = await res.json();
         if (data.success) {
           showResult(result, 'success', 'ありがとうございます！送信が完了しました。2営業日以内にご連絡します。');
-          ['cf-name','cf-email','cf-message'].forEach(id => document.getElementById(id).value = '');
+          ['cf-name', 'cf-email', 'cf-message'].forEach(id => document.getElementById(id).value = '');
           document.getElementById('cf-privacy').checked = false;
         } else {
           showResult(result, 'error', '送信に失敗しました。時間をおいて再度お試しください。');
         }
-      } catch(e) {
+      } catch (e) {
+        console.error('[submitContact] 通信エラー:', e);
         showResult(result, 'error', '通信エラーが発生しました。時間をおいて再度お試しください。');
+      } finally {
+        btn.textContent = '送信する →';
+        btn.style.opacity = '';
+        btn.style.pointerEvents = '';
       }
-
-      btn.textContent = '送信する →';
-      btn.style.opacity = '';
-      btn.style.pointerEvents = '';
     }
-
-    function showResult(el, type, msg) {
-      el.style.display = 'block';
-      el.style.background = type === 'success' ? '#EBF7F2' : '#FDEEEE';
-      el.style.color      = type === 'success' ? '#2D9C6E' : '#D94F4F';
-      el.style.border     = type === 'success' ? '1px solid #2D9C6E' : '1px solid #D94F4F';
-      el.textContent = msg;
-    }
-
 
     // ============================================
-    // GAS からデータを読み込んで公開サイトに反映
+    // GAS から全データを一括取得してサイトに反映
+    // ※ getInitialData を使い fetch 1回で完結
     // ============================================
     async function loadSiteData() {
+      let data;
       try {
-        // 料金
-        const pRes = await fetch(GAS_URL + '?action=getPricing');
-        const pData = await pRes.json();
-        if (pData?.pricing?.length > 0) {
-          const first = pData.pricing[0];
-          const el = document.getElementById('site-pricing-display');
-          if (el) el.innerHTML = '¥' + Number(first.price).toLocaleString() + ' <span style="font-size:1rem;font-family:var(--sans-ja);font-weight:300;">/ ' + first.unit + '〜</span>';
+        const res = await fetch(GAS_URL + '?action=getInitialData');
+        const json = await res.json();
+        if (!json.success) {
+          console.error('[loadSiteData] GASエラー:', json.error);
+          return;
         }
-      } catch(e) {}
+        data = json.data;
+      } catch (e) {
+        console.error('[loadSiteData] fetch失敗:', e);
+        return;
+      }
 
+      // --- 料金 ---
       try {
-        // サービス
-        const sRes = await fetch(GAS_URL + '?action=getServices');
-        const sData = await sRes.json();
-        if (sData?.services) {
-          sData.services.forEach(s => {
+        const pricing = data.pricing;
+        if (pricing?.length > 0) {
+          const first = pricing[0];
+          const el = document.getElementById('site-pricing-display');
+          if (el) el.innerHTML = '¥' + Number(first.price).toLocaleString()
+            + ' <span style="font-size:1rem;font-family:var(--sans-ja);font-weight:300;">/ ' + first.unit + '〜</span>';
+        }
+      } catch (e) { console.error('[loadSiteData] pricing反映エラー:', e); }
+
+      // --- サービス ---
+      try {
+        const services = data.services;
+        if (services?.length > 0) {
+          services.forEach(s => {
             const nameEl = document.getElementById('svc-' + s.slug + '-name');
             const descEl = document.getElementById('svc-' + s.slug + '-desc');
             const linkEl = document.getElementById('svc-' + s.slug + '-link');
@@ -1963,49 +1991,45 @@
             if (linkEl && s.useExt && s.extUrl) linkEl.href = s.extUrl;
           });
         }
-      } catch(e) {}
+      } catch (e) { console.error('[loadSiteData] services反映エラー:', e); }
 
+      // --- プロフィール ---
       try {
-        // プロフィール
-        const prRes = await fetch(GAS_URL + '?action=getProfile');
-        const prData = await prRes.json();
-        if (prData?.profile) {
-          const p = prData.profile;
-          const bioEl = document.getElementById('site-about-bio');
-          if (bioEl && p.bio) bioEl.innerHTML = p.bio.replace(/\n/g, '<br>');
+        const settings = data.settings;
+        const bio = settings?.['profile.bio']?.value;
+        const bioEl = document.getElementById('site-about-bio');
+        if (bioEl && bio) bioEl.innerHTML = bio.replace(/\n/g, '<br>');
+      } catch (e) { console.error('[loadSiteData] profile反映エラー:', e); }
+
+      // --- CTAリンク ---
+      try {
+        const settings = data.settings;
+        const mainCta = settings?.['cta.mainCta']?.value;
+        const booking = settings?.['cta.booking']?.value;
+        if (mainCta) {
+          document.querySelectorAll('#cta-main-btn').forEach(el => { el.href = mainCta; });
         }
-      } catch(e) {}
-
-      try {
-        // CTAリンク
-        const cRes = await fetch(GAS_URL + '?action=getCta');
-        const cData = await cRes.json();
-        if (cData?.cta) {
-          const c = cData.cta;
-          if (c.mainCta) {
-            document.querySelectorAll('a[href="#contact"].btn-primary, #cta-main-btn').forEach(el => { el.href = c.mainCta; });
-          }
-          if (c.booking) {
-            document.querySelectorAll('a[href*="calendar"]').forEach(el => { el.href = c.booking; });
-          }
+        if (booking) {
+          document.querySelectorAll('a[href*="calendar"]').forEach(el => { el.href = booking; });
         }
-      } catch(e) {}
+      } catch (e) { console.error('[loadSiteData] CTA反映エラー:', e); }
 
+      // --- 画像 ---
       try {
-        // 画像
-        const iRes  = await fetch(GAS_URL + '?action=getImages');
-        const iData = await iRes.json();
-        if (iData?.images) {
-          if (iData.images.hero?.url) {
-            const wrap = document.getElementById('hero-photo-wrap');
-            if (wrap) wrap.innerHTML = '<img src="' + iData.images.hero.url + '" style="width:100%;height:100%;object-fit:cover;position:relative;z-index:1">';
-          }
-          if (iData.images.about?.url) {
-            const wrap = document.getElementById('about-photo-wrap');
-            if (wrap) wrap.innerHTML = '<img src="' + iData.images.about.url + '" style="width:100%;height:100%;object-fit:cover">';
+        const images = data.images;
+        if (images?.hero?.url) {
+          const wrap = document.getElementById('hero-photo-wrap');
+          if (wrap) {
+            wrap.innerHTML = '<img src="' + images.hero.url + '" style="width:100%;height:100%;object-fit:cover;position:relative;z-index:1">';
           }
         }
-      } catch(e) {}
+        if (images?.about?.url) {
+          const wrap = document.getElementById('about-photo-wrap');
+          if (wrap) {
+            wrap.innerHTML = '<img src="' + images.about.url + '" style="width:100%;height:100%;object-fit:cover">';
+          }
+        }
+      } catch (e) { console.error('[loadSiteData] images反映エラー:', e); }
     }
 
     // ページ読み込み時に実行

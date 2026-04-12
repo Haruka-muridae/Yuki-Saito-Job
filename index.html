@@ -1954,26 +1954,48 @@
 
 
     // ============================================
-    // GAS からデータを読み込んで公開サイトに反映
+    // GAS から全データを一括取得してサイトに反映
     // ============================================
     async function loadSiteData() {
-      try {
-        // 料金
-        const pRes = await fetch(GAS_URL + '?action=getPricing');
-        const pData = await pRes.json();
-        if (pData?.pricing?.length > 0) {
-          const first = pData.pricing[0];
-          const el = document.getElementById('site-pricing-display');
-          if (el) el.innerHTML = '¥' + Number(first.price).toLocaleString() + ' <span style="font-size:1rem;font-family:var(--sans-ja);font-weight:300;">/ ' + first.unit + '〜</span>';
-        }
-      } catch(e) {}
+      let data;
 
+      // --- 全データ一括取得 ---
       try {
-        // サービス
-        const sRes = await fetch(GAS_URL + '?action=getServices');
-        const sData = await sRes.json();
-        if (sData?.services) {
-          sData.services.forEach(s => {
+        const res  = await fetch(GAS_URL + '?action=getInitialData');
+        const json = await res.json();
+        if (!json.success) {
+          console.error('[loadSiteData] GASエラー:', json.error);
+          // 取得失敗時はskeletonを解除してプレースホルダー表示に戻す
+          ['hero-photo-wrap', 'about-photo-wrap'].forEach(id => {
+            document.getElementById(id)?.classList.remove('skeleton');
+          });
+          return;
+        }
+        data = json.data;
+      } catch (e) {
+        console.error('[loadSiteData] fetch失敗:', e);
+        ['hero-photo-wrap', 'about-photo-wrap'].forEach(id => {
+          document.getElementById(id)?.classList.remove('skeleton');
+        });
+        return;
+      }
+
+      // --- 料金 ---
+      try {
+        const pricing = data.pricing;
+        if (pricing?.length > 0) {
+          const first = pricing[0];
+          const el = document.getElementById('site-pricing-display');
+          if (el) el.innerHTML = '¥' + Number(first.price).toLocaleString()
+            + ' <span style="font-size:1rem;font-family:var(--sans-ja);font-weight:300;">/ ' + first.unit + '〜</span>';
+        }
+      } catch (e) { console.error('[loadSiteData] pricing反映エラー:', e); }
+
+      // --- サービス ---
+      try {
+        const services = data.services;
+        if (services?.length > 0) {
+          services.forEach(s => {
             const nameEl = document.getElementById('svc-' + s.slug + '-name');
             const descEl = document.getElementById('svc-' + s.slug + '-desc');
             const linkEl = document.getElementById('svc-' + s.slug + '-link');
@@ -1982,59 +2004,51 @@
             if (linkEl && s.useExt && s.extUrl) linkEl.href = s.extUrl;
           });
         }
-      } catch(e) {}
+      } catch (e) { console.error('[loadSiteData] services反映エラー:', e); }
 
+      // --- プロフィール ---
       try {
-        // プロフィール
-        const prRes = await fetch(GAS_URL + '?action=getProfile');
-        const prData = await prRes.json();
-        if (prData?.profile) {
-          const p = prData.profile;
-          const bioEl = document.getElementById('site-about-bio');
-          if (bioEl && p.bio) bioEl.innerHTML = p.bio.replace(/\n/g, '<br>');
+        const bio = data.settings?.['profile.bio']?.value;
+        const bioEl = document.getElementById('site-about-bio');
+        if (bioEl && bio) bioEl.innerHTML = bio.replace(/\n/g, '<br>');
+      } catch (e) { console.error('[loadSiteData] profile反映エラー:', e); }
+
+      // --- CTAリンク ---
+      try {
+        const mainCta = data.settings?.['cta.mainCta']?.value;
+        const booking  = data.settings?.['cta.booking']?.value;
+        if (mainCta) {
+          document.querySelectorAll('#cta-main-btn').forEach(el => { el.href = mainCta; });
         }
-      } catch(e) {}
-
-      try {
-        // CTAリンク
-        const cRes = await fetch(GAS_URL + '?action=getCta');
-        const cData = await cRes.json();
-        if (cData?.cta) {
-          const c = cData.cta;
-          if (c.mainCta) {
-            document.querySelectorAll('a[href="#contact"].btn-primary, #cta-main-btn').forEach(el => { el.href = c.mainCta; });
-          }
-          if (c.booking) {
-            document.querySelectorAll('a[href*="calendar"]').forEach(el => { el.href = c.booking; });
-          }
+        if (booking) {
+          document.querySelectorAll('a[href*="calendar"]').forEach(el => { el.href = booking; });
         }
-      } catch(e) {}
+      } catch (e) { console.error('[loadSiteData] CTA反映エラー:', e); }
+
+      // --- 画像（skeleton解除 + フェードイン）---
+      function setImage(wrapId, url, cssText) {
+        const wrap = document.getElementById(wrapId);
+        if (!wrap) return;
+        if (!url) {
+          wrap.classList.remove('skeleton');
+          return;
+        }
+        const img = new Image();
+        img.onload = () => {
+          wrap.classList.remove('skeleton');
+          img.style.cssText = cssText;
+          wrap.innerHTML = '';
+          wrap.appendChild(img);
+          requestAnimationFrame(() => { img.style.opacity = '1'; });
+        };
+        img.onerror = () => {
+          wrap.classList.remove('skeleton');
+        };
+        img.src = url;
+      }
 
       try {
-        // 画像（skeleton解除 + フェードイン）
         const images = data.images;
-
-        function setImage(wrapId, url, cssText) {
-          const wrap = document.getElementById(wrapId);
-          if (!wrap) return;
-          if (!url) {
-            wrap.classList.remove('skeleton');
-            return;
-          }
-          const img = new Image();
-          img.onload = () => {
-            wrap.classList.remove('skeleton');
-            img.style.cssText = cssText;
-            wrap.innerHTML = '';
-            wrap.appendChild(img);
-            requestAnimationFrame(() => { img.style.opacity = '1'; });
-          };
-          img.onerror = () => {
-            wrap.classList.remove('skeleton');
-          };
-          img.src = url;
-        }
-
         setImage(
           'hero-photo-wrap',
           images?.hero?.url,

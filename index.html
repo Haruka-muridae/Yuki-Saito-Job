@@ -1380,6 +1380,24 @@
       animation: shimmer 1.5s ease-in-out infinite;
     }
 
+    /* テキスト用スケルトン */
+    .skeleton-text {
+      display: inline-block;
+      min-width: 120px;
+      min-height: 1em;
+      border-radius: 2px;
+      background: linear-gradient(
+        90deg,
+        var(--beige) 25%,
+        var(--beige-mid) 50%,
+        var(--beige) 75%
+      );
+      background-size: 200% 100%;
+      animation: shimmer 1.5s ease-in-out infinite;
+      color: transparent !important;
+      pointer-events: none;
+    }
+
     /* Contact Form */
     .contact-form-wrap {
       max-width: 560px;
@@ -1532,7 +1550,7 @@
             「何をすれば？」から<br>一緒に考えます。
           </h2>
           <p class="about-body">
-            <span id="site-about-bio">はじめまして、Yuki Saito です。皆さまからは「<strong>悠</strong>」と呼ばれています。<br><br>システムコンサルタント・教育コンサルタント・営業代行者として、個人・中小企業・教育機関のみなさまに向き合ってきました。課題は複雑でも、解決の糸口はいつもシンプルです。あなたの状況・目的・ペースに合わせた、完全オーダーメイドの伴走をお約束します。</span>
+            <span id="site-about-bio" class="skeleton-text">　</span>
           </p>
           <div class="about-values">
             <div class="about-value-item">
@@ -1571,8 +1589,8 @@
             <circle cx="34" cy="26" r="2" fill="currentColor"/>
           </svg>
           <p class="service-name-en">System Consulting</p>
-          <p class="service-name-ja" id="svc-system-name">組織システムコンサルティング</p>
-          <p class="service-desc" id="svc-system-desc">IT導入に関心はあるが進められていない中小企業・個人事業主の方へ。業務の現状をヒアリングし、最適なシステム設計をゼロから一緒に考えます。</p>
+          <p class="service-name-ja skeleton-text" id="svc-system-name">　</p>
+          <p class="service-desc skeleton-text" id="svc-system-desc">　</p>
           <a id="svc-system-link" href="/services/system" class="service-link">詳しく見る</a>
         </div>
 
@@ -1584,8 +1602,8 @@
             <circle cx="24" cy="18" r="4" stroke="currentColor" stroke-width="1.5"/>
           </svg>
           <p class="service-name-en">Education Consulting</p>
-          <p class="service-name-ja" id="svc-education-name">教育・学習支援コンサルティング</p>
-          <p class="service-desc" id="svc-education-desc">子どもの教育に悩む保護者・施設管理者の方へ。一人ひとりの特性と課題に寄り添い、継続できる学習環境づくりをサポートします。</p>
+          <p class="service-name-ja skeleton-text" id="svc-education-name">　</p>
+          <p class="service-desc skeleton-text" id="svc-education-desc">　</p>
           <a id="svc-education-link" href="/services/education" class="service-link">詳しく見る</a>
         </div>
 
@@ -1597,8 +1615,8 @@
             <path d="M36 40H12v-6h24v6z" stroke="currentColor" stroke-width="1.5"/>
           </svg>
           <p class="service-name-en">Sales Agency</p>
-          <p class="service-name-ja" id="svc-sales-name">営業代行</p>
-          <p class="service-desc" id="svc-sales-desc">私が自信を持っておすすめできる商品・サービスのみを取り扱います。量より質を大切に、信頼できる相手への誠実な橋渡しをします。</p>
+          <p class="service-name-ja skeleton-text" id="svc-sales-name">　</p>
+          <p class="service-desc skeleton-text" id="svc-sales-desc">　</p>
           <a id="svc-sales-link" href="/services/sales" class="service-link">詳しく見る</a>
         </div>
       </div>
@@ -1750,7 +1768,7 @@
         </p>
         <div style="display: inline-flex; flex-direction: column; align-items: center; gap: 8px; background: var(--beige); padding: 28px 48px; border: 1px solid var(--beige-mid);">
           <span style="font-family:var(--mono); font-size:0.62rem; letter-spacing:0.2em; color:var(--gold); text-transform:uppercase;">Starting from</span>
-          <span id="site-pricing-display" style="font-family:var(--serif-en); font-size:2.4rem; font-weight:300; color:var(--navy);">¥15,000 <span style="font-size:1rem; font-family:var(--sans-ja); font-weight:300;">/ hour〜</span></span>
+          <span id="site-pricing-display" class="skeleton-text" style="font-family:var(--serif-en); font-size:2.4rem; font-weight:300; color:var(--navy); min-width:200px;">　</span>
           <span style="font-family:var(--sans-ja); font-size:0.75rem; font-weight:300; color:var(--ink-lt);">※ 内容により異なります。まずはご相談ください。</span>
         </div>
       </div>
@@ -1953,6 +1971,20 @@
     }
 
 
+    // 全スケルトン解除（取得失敗時のフォールバック）
+    function removeAllSkeletons_() {
+      ['hero-photo-wrap', 'about-photo-wrap'].forEach(id => {
+        document.getElementById(id)?.classList.remove('skeleton');
+      });
+      ['site-about-bio', 'site-pricing-display',
+       'svc-system-name', 'svc-system-desc',
+       'svc-education-name', 'svc-education-desc',
+       'svc-sales-name', 'svc-sales-desc'
+      ].forEach(id => {
+        document.getElementById(id)?.classList.remove('skeleton-text');
+      });
+    }
+
     // ============================================
     // GAS から全データを一括取得してサイトに反映
     // ============================================
@@ -1965,29 +1997,30 @@
         const json = await res.json();
         if (!json.success) {
           console.error('[loadSiteData] GASエラー:', json.error);
-          // 取得失敗時はskeletonを解除してプレースホルダー表示に戻す
-          ['hero-photo-wrap', 'about-photo-wrap'].forEach(id => {
-            document.getElementById(id)?.classList.remove('skeleton');
-          });
+          removeAllSkeletons_();
           return;
         }
         data = json.data;
       } catch (e) {
         console.error('[loadSiteData] fetch失敗:', e);
-        ['hero-photo-wrap', 'about-photo-wrap'].forEach(id => {
-          document.getElementById(id)?.classList.remove('skeleton');
-        });
+        removeAllSkeletons_();
         return;
       }
 
       // --- 料金 ---
       try {
         const pricing = data.pricing;
-        if (pricing?.length > 0) {
-          const first = pricing[0];
-          const el = document.getElementById('site-pricing-display');
-          if (el) el.innerHTML = '¥' + Number(first.price).toLocaleString()
-            + ' <span style="font-size:1rem;font-family:var(--sans-ja);font-weight:300;">/ ' + first.unit + '〜</span>';
+        const el = document.getElementById('site-pricing-display');
+        if (el) {
+          if (pricing?.length > 0) {
+            const first = pricing[0];
+            el.classList.remove('skeleton-text');
+            el.innerHTML = '¥' + Number(first.price).toLocaleString()
+              + ' <span style="font-size:1rem;font-family:var(--sans-ja);font-weight:300;">/ ' + first.unit + '〜</span>';
+          } else {
+            el.classList.remove('skeleton-text');
+            el.innerHTML = '';
+          }
         }
       } catch (e) { console.error('[loadSiteData] pricing反映エラー:', e); }
 
@@ -1999,9 +2032,13 @@
             const nameEl = document.getElementById('svc-' + s.slug + '-name');
             const descEl = document.getElementById('svc-' + s.slug + '-desc');
             const linkEl = document.getElementById('svc-' + s.slug + '-link');
-            if (nameEl && s.nameJa) nameEl.textContent = s.nameJa;
-            if (descEl && s.desc)   descEl.textContent = s.desc;
+            if (nameEl) { nameEl.classList.remove('skeleton-text'); if (s.nameJa) nameEl.textContent = s.nameJa; }
+            if (descEl) { descEl.classList.remove('skeleton-text'); if (s.desc)   descEl.textContent = s.desc; }
             if (linkEl && s.useExt && s.extUrl) linkEl.href = s.extUrl;
+          });
+        } else {
+          ['svc-system-name','svc-system-desc','svc-education-name','svc-education-desc','svc-sales-name','svc-sales-desc'].forEach(id => {
+            document.getElementById(id)?.classList.remove('skeleton-text');
           });
         }
       } catch (e) { console.error('[loadSiteData] services反映エラー:', e); }
@@ -2010,7 +2047,10 @@
       try {
         const bio = data.settings?.['profile.bio']?.value;
         const bioEl = document.getElementById('site-about-bio');
-        if (bioEl && bio) bioEl.innerHTML = bio.replace(/\n/g, '<br>');
+        if (bioEl) {
+          bioEl.classList.remove('skeleton-text');
+          if (bio) bioEl.innerHTML = bio.replace(/\n/g, '<br>');
+        }
       } catch (e) { console.error('[loadSiteData] profile反映エラー:', e); }
 
       // --- CTAリンク ---
